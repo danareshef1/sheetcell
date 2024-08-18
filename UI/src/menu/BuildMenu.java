@@ -1,6 +1,8 @@
 package menu;
 
+import files.jaxb.schema.generated.STLSheet;
 import menu.menuItems.selectionFour.SheetUpdater;
+import menu.menuItems.selectionOne.LoadFile;
 import menu.menuItems.selectionThree.CellPresentation;
 import menu.menuItems.selectionThree.CellPrinter;
 import menu.menuItems.selectionTwo.SheetPresentation;
@@ -18,6 +20,7 @@ public class BuildMenu {
 
         SheetImpl sheet = SetSheet.setSheet();
 
+        LoadFile loadFile = new LoadFile(oneSelection);
         SheetPresentation presentSheet = new SheetPresentation(twoSelection, sheet);
         CellPresentation presentCell = new CellPresentation(threeSelection, sheet);
         SheetUpdater sheetUpdater = new SheetUpdater(fourSelection, sheet);

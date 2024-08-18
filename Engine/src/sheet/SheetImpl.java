@@ -50,6 +50,9 @@ public class SheetImpl implements Sheet {
 
     @Override
     public Cell getCell(int row, int column) {
+        if(activeCells.get(CoordinateFactory.createCoordinate(row, column)) == null){
+            setCell(row, column, null);
+        }
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));
     }
 

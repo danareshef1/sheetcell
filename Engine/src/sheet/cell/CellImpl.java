@@ -12,7 +12,7 @@ import java.util.List;
 
 public class CellImpl implements Cell {
     private final Coordinate coordinate;
-    private Expression<?> effectiveValue;
+    private Expression<?> effectiveValue = null;
     private String originalValue;
     private int version;
     private List<Cell> pastValues;
@@ -24,11 +24,14 @@ public class CellImpl implements Cell {
     public CellImpl(int row, int column, String originalValue) {
         this.coordinate = new CoordinateImpl(row, column);
         this.originalValue = originalValue;
-        this.version = 1;
+        this.version = 0;
         this.dependsOnValues = new ArrayList<>();
         this.influencingOnValues = new ArrayList<>();
         cellId = rowToString(row) + "" + (column+1);
-        calculateEffectiveValue();
+        if (originalValue != null) {
+            updateVersion();
+            calculateEffectiveValue();
+        }
     }
 
     private char rowToString(int row) {

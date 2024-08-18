@@ -2,10 +2,7 @@ package menu.menuItems.selectionFour;
 
 import menu.MenuItem;
 import menu.MenuItemListener;
-import menu.SetSheet;
 import menu.menuItems.selectionTwo.SheetPrinter;
-import sheet.CellSize;
-import sheet.Layout;
 import sheet.SheetImpl;
 import sheet.cell.Cell;
 
@@ -34,10 +31,6 @@ public class SheetUpdater implements MenuItemListener {
         }
 
         Cell cell = sheet.getCell(row, column);
-        if (cell == null) {
-            System.out.println("Cell not found.");
-            return;
-        }
 
         System.out.println("Cell address: " + cellAddress);
         System.out.println("Original value: " + cell.getOriginalValue());
@@ -60,6 +53,7 @@ public class SheetUpdater implements MenuItemListener {
 
             sheet.incrementVersion();
             sheet.incrementCellChanged();
+            cell.updateVersion();
             System.out.println("Spreadsheet version updated to " + sheet.getVersion());
 
         } catch (Exception e) {
