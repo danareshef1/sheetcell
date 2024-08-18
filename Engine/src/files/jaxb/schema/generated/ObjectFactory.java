@@ -5,11 +5,10 @@
 //
 
 
-package files.jaxb.schema;
+package files.jaxb.schema.generated;
 
 import javax.xml.namespace.QName;
 
-import files.jaxb.schema.STLSize;
 import jakarta.xml.bind.JAXBElement;
 import jakarta.xml.bind.annotation.XmlElementDecl;
 import jakarta.xml.bind.annotation.XmlRegistry;

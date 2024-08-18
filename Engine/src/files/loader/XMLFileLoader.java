@@ -1,6 +1,6 @@
 package files.loader;
 
-import files.jaxb.schema.STLSheet;
+import files.jaxb.schema.generated.STLSheet;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
@@ -12,7 +12,7 @@ import java.io.InputStream;
 
 public class XMLFileLoader {
 
-    private final static String XML_PACKAGE_NAME = "files.jaxb.schema";
+    private final static String XML_PACKAGE_NAME = "files.jaxb.schema.generated";
 
     public static STLSheet loadXmlFile(String filePath) {
         try {
