@@ -45,7 +45,6 @@ public class SheetUpdater implements MenuItemListener {
 
         try {
             sheet.setCell(row, column, newValue);
-            cell.setCellOriginalValue(newValue);
             cell.calculateEffectiveValue();
 
             // Update dependencies

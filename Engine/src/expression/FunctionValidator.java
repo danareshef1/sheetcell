@@ -75,19 +75,21 @@ public class FunctionValidator {
         }
 
         parts.add(currentPart.toString().trim());
+        String thisFuncName = parts.getFirst().toUpperCase();
 
         // Check the function name after splitting
-        if (parts.isEmpty() || !parts.getFirst().equals(functionName)) {
+        if (parts.isEmpty() || !thisFuncName.equals(functionName)) {
             throw new IllegalArgumentException("Invalid " + functionName + " expression format: " + expression);
         }
 
+        parts.getFirst().toUpperCase().trim();
         return parts.toArray(new String[0]);
     }
 
     public static String getFunctionName(String expression) {
         expression = expression.substring(1, expression.length() - 1).trim();
         String[] parts = expression.split(",", 2);
-        return parts[0].trim();
+        return parts[0].trim().toUpperCase();
     }
 }
 

@@ -29,7 +29,7 @@ public class StringValidator {
             return false;
         }
 
-        return expression.matches("\\{[A-Z][A-Za-z_]*,\\s*(?:[^{}]+(?:\\{[^{}]*\\})*)+}");
+        return expression.matches("\\{[A-Za-z_]+,\\s*(?:[^{}]+(?:\\{[^{}]*\\})*)+}");
     }
 }
 

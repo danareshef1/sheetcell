@@ -1,6 +1,7 @@
 package menu;
 
 import files.jaxb.schema.generated.STLSheet;
+import menu.menuItems.selectionFive.VersionManager;
 import menu.menuItems.selectionFour.SheetUpdater;
 import menu.menuItems.selectionOne.LoadFile;
 import menu.menuItems.selectionThree.CellPresentation;
@@ -24,6 +25,7 @@ public class BuildMenu {
         SheetPresentation presentSheet = new SheetPresentation(twoSelection, sheet);
         CellPresentation presentCell = new CellPresentation(threeSelection, sheet);
         SheetUpdater sheetUpdater = new SheetUpdater(fourSelection, sheet);
+        VersionManager versionManager = new VersionManager(fiveSelection, sheet);
 
         return mainMenu;
     }
