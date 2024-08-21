@@ -10,11 +10,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
-public class XMLFileLoader {
+
+public class XmlFileLoader {
 
     private final static String XML_PACKAGE_NAME = "files.jaxb.schema.generated";
 
-    public static STLSheet loadXmlFile(String filePath) {
+    public static STLSheet validateLoadXmlFile(String filePath) {
         try {
             XmlValidator.validateXmlFile(filePath);
             InputStream inputStream = new FileInputStream(new File(filePath));

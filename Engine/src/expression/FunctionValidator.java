@@ -53,6 +53,19 @@ public class FunctionValidator {
             throw new IllegalArgumentException("Invalid expression format: " + expression);
         }
 
+        List<String> parts = getStringList(expression);
+        String thisFuncName = parts.getFirst().trim().toUpperCase();
+
+        // Check the function name after splitting
+        if (parts.isEmpty() || !thisFuncName.equals(functionName)) {
+            throw new IllegalArgumentException("Invalid " + functionName + " expression format: " + expression);
+        }
+
+        parts.getFirst().toUpperCase().trim();
+        return parts.toArray(new String[0]);
+    }
+
+    private static List<String> getStringList(String expression) {
         List<String> parts = new ArrayList<>();
         int braceCount = 0;
         StringBuilder currentPart = new StringBuilder();
@@ -75,15 +88,7 @@ public class FunctionValidator {
         }
 
         parts.add(currentPart.toString().trim());
-        String thisFuncName = parts.getFirst().toUpperCase();
-
-        // Check the function name after splitting
-        if (parts.isEmpty() || !thisFuncName.equals(functionName)) {
-            throw new IllegalArgumentException("Invalid " + functionName + " expression format: " + expression);
-        }
-
-        parts.getFirst().toUpperCase().trim();
-        return parts.toArray(new String[0]);
+        return parts;
     }
 
     public static String getFunctionName(String expression) {

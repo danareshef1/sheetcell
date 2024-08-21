@@ -2,6 +2,7 @@ package menu.menuItems.selectionFive;
 
 import menu.MenuItem;
 import menu.MenuItemListener;
+import sheet.Sheet;
 import sheet.SheetImpl;
 import sheet.cell.Cell;
 import sheet.coordinate.Coordinate;
@@ -13,10 +14,10 @@ import java.util.Scanner;
 
 public class VersionManager implements MenuItemListener {
 
-    private final SheetImpl sheet;
+    private final Sheet sheet;
     private final Map<Integer, Map<Coordinate, Cell>> versionsHistory;
 
-    public VersionManager(MenuItem menuItem, SheetImpl sheet) {
+    public VersionManager(MenuItem menuItem, Sheet sheet) {
         menuItem.addItemSelectedListener(this);
         this.sheet = sheet;
         this.versionsHistory = new HashMap<>();

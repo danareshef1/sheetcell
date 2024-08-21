@@ -1,5 +1,7 @@
 package expression;
 
+import java.util.List;
+
 public abstract class BinaryExpression<T> extends FunctionValidator implements Expression<T> {
 
     private final Expression<T> expression1;
@@ -17,6 +19,10 @@ public abstract class BinaryExpression<T> extends FunctionValidator implements E
     }
 
     protected abstract T evaluate(T evaluate1, T evaluate2);
+
+
+//    @Override
+//    public abstract T evaluate(List<T> args);
 
     @Override
     public String toString() {

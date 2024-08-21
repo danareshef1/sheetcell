@@ -34,20 +34,20 @@ public class CellImpl implements Cell {
         }
     }
 
-    @Override
-    public CellImpl clone() {
-        try {
-            CellImpl cloned = (CellImpl) super.clone();
-            // Deep copy if necessary (e.g., lists)
-            cloned.pastValues = new ArrayList<>(this.pastValues);
-            cloned.dependsOnValues = new ArrayList<>(this.dependsOnValues);
-            cloned.influencingOnValues = new ArrayList<>(this.influencingOnValues);
-            // The expression might also need cloning, depending on its immutability
-            return cloned;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError(); // Can't happen
-        }
-    }
+//    @Override
+//    public CellImpl clone() {
+//        try {
+//            CellImpl cloned = (CellImpl) super.clone();
+//            // Deep copy if necessary (e.g., lists)
+//            cloned.pastValues = new ArrayList<>(this.pastValues);
+//            cloned.dependsOnValues = new ArrayList<>(this.dependsOnValues);
+//            cloned.influencingOnValues = new ArrayList<>(this.influencingOnValues);
+//            // The expression might also need cloning, depending on its immutability
+//            return cloned;
+//        } catch (CloneNotSupportedException e) {
+//            throw new AssertionError(); // Can't happen
+//        }
+//    }
 
     private char rowToString(int row) {
         return (char)('A' + (row));

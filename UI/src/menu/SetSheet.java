@@ -17,7 +17,8 @@ public class SetSheet {
 
         // Create the sheet with the specified version, name, cells, and layout
         sheet = new SheetImpl("MySheet", layout);
-        sheet.setCell(1, 1, "{SUB, {CONCAT, A, bcdE}, 0, 3}");
+        sheet.setCell(1, 1, "{PLUS, {minus, 2, 1}, 3}");
+       // sheet.setCell(2, 2, "{ref, B2}");
 
         return sheet;
     }

@@ -4,6 +4,7 @@ import expression.Expression;
 import expression.Number;
 import expression.UnaryExpression;
 import parser.ExpressionParser;
+import sheet.Sheet;
 
 public class ABS extends UnaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
 
@@ -18,9 +19,20 @@ public class ABS extends UnaryExpression<Double> implements NumericalExpression,
     }
 
     @Override
+    public Expression<Object> evaluate(Sheet sheet) {
+        return null;
+    }
+
+    @Override
     public Expression<Double> parse(Expression<?>... args) {
         if (args.length != 1) {
-            throw new IllegalArgumentException("PLUS function requires exactly 2 arguments.");
+            throw new IllegalArgumentException("ABS function requires exactly 1 argument, but got " + args.length);
+        }
+
+        // Check if both arguments are numerical expressions
+        if (!NumericalExpression.isNumericalExpression(args[0])) {
+            throw new IllegalArgumentException("Invalid argument types for ABS function. Expected numerical expressions, but got "
+                    + args[0].getClass().getSimpleName());
         }
 
         return new ABS((Expression<Double>) args[0]);

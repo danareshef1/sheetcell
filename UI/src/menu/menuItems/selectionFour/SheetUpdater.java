@@ -3,6 +3,7 @@ package menu.menuItems.selectionFour;
 import menu.MenuItem;
 import menu.MenuItemListener;
 import menu.menuItems.selectionTwo.SheetPrinter;
+import sheet.Sheet;
 import sheet.SheetImpl;
 import sheet.cell.Cell;
 

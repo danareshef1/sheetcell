@@ -5,6 +5,8 @@ import expression.Number;
 import expression.numericalExpression.*;
 import expression.stringExpression.CONCAT;
 import expression.stringExpression.SUB;
+import expression.systemicExpression.REF;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,6 +24,7 @@ public class ExpressionFactory {
         parsers.put("POW", new POW(null, null));
         parsers.put("CONCAT", new CONCAT(null, null));
         parsers.put("SUB", new SUB(null, null, null));
+        parsers.put("REF", new REF(null));
     }
 
     public static Expression<?> createExpression(String expression) {

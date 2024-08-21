@@ -9,6 +9,7 @@ public interface Cell {
     Coordinate getCoordinate();
     String getOriginalValue();
     void setCellOriginalValue(String value);
+//    void setCellEffectiveValue(Expression<?> value);
     Expression<?> getEffectiveValue();
     void calculateEffectiveValue();
     int getVersion();

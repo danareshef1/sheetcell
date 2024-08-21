@@ -1,12 +1,17 @@
 package files.loader;
 
+import files.jaxb.schema.generated.STLCell;
+import files.jaxb.schema.generated.STLSheet;
 import org.w3c.dom.Document;
+import sheet.CellSize;
+import sheet.Layout;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -23,7 +28,6 @@ public class XmlValidator {
         if (!filePath.endsWith(".xml")) {
             throw new IllegalArgumentException("The file is not an XML file: " + filePath);
         }
-
         return new File(filePath);
     }
 
@@ -45,21 +49,37 @@ public class XmlValidator {
                 .orElseThrow(() -> new IllegalArgumentException("File does not exist."));
     }
 
-    private static boolean validateSheet(Document doc) {
+    public static void validateSheet(STLSheet stlSheet) {
         // Validate the file according to the specified requirements
-        int numRows = Integer.parseInt(doc.getDocumentElement().getAttribute("rows"));
-        int numCols = Integer.parseInt(doc.getDocumentElement().getAttribute("cols"));
-
-        if (numRows < 1 || numRows > 50 || numCols < 1 || numCols > 20) {
-            System.out.println("Error: Sheet size is out of valid range.");
-            return false;
+        int numRows = stlSheet.getSTLLayout().getRows();
+        int numCols = stlSheet.getSTLLayout().getColumns();
+        CellSize cellSize = new CellSize(stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits(), stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits());
+        Layout layout = new Layout(numRows, numCols, cellSize);
+        if (!isInBounds(numRows, layout.getMinimumRows(), layout.getMaximumRows())) {
+            throw new IllegalArgumentException("Rows number is out of valid range.");
         }
-//        גודל הגליון בשורות הוא מספר שלם בין 1 ל 50 ובעמודות הוא מספר שלם בין 1 ל 20
-//        במסגרת הגדרת התאים, אין תא שמיקומו מוגדר להיות מחוץ לגבולות הגליון
+        if (!isInBounds(numCols, layout.getMinimumCols(), layout.getMaximumCols())){
+            throw new IllegalArgumentException("Columns number is out of valid range.");
+        }
+
+        validateCells(stlSheet, numRows, numCols);
+
 //        התאים המגדירים שימוש בפונקציות מכווינים לתאים המכילים מידע שמתאים לארגומנטים של הפונקציה
+    }
 
-        // Additional checks for cells, functions, etc.
+    private static void validateCells(STLSheet stlSheet, int numRows, int numCols){
+        List<STLCell> cells = stlSheet.getSTLCells().getSTLCell();
+        for (STLCell cell : cells) {
+            char column = cell.getColumn().charAt(0);
+            if (!isInBounds(column-'A', 0, numCols-1)
+            || !isInBounds(cell.getRow(), 0, numRows+1)){
+                throw new IllegalArgumentException("cell" + cell.getRow() + ":" + cell.getColumn() + " is not in valid range." +
+                        "The range is " + numRows + " rows and " + numCols + " columns.");
+            }
+        }
+    }
 
-        return true; // Return false if there is a problem with the data
+    private static boolean isInBounds(int value, int min, int max) {
+        return value >= min && value <= max;
     }
 }

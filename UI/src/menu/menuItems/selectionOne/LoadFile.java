@@ -1,14 +1,12 @@
 package menu.menuItems.selectionOne;
 
-import files.jaxb.schema.generated.STLSheet;
-import files.loader.XMLFileLoader;
+import files.loader.XmlFileLoader;
 import menu.MenuItem;
 import menu.MenuItemListener;
-import org.w3c.dom.Document;
-import sheet.SheetImpl;
+
+import java.util.Scanner;
 
 public class LoadFile implements MenuItemListener {
-    private STLSheet sheet;
 
     public LoadFile(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);
@@ -20,6 +18,14 @@ public class LoadFile implements MenuItemListener {
     }
 
     public void loadFile() {
-        sheet = XMLFileLoader.loadXmlFile("/Users/danareshef/IdeaProjects/testXmlForSeetcell1/basic.xml");
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Please enter a full file path to the file that you want to load: ");
+        String fileAddress = scanner.nextLine().trim();
+
+        try {
+            XmlFileLoader.validateLoadXmlFile(fileAddress);
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

@@ -1,12 +1,13 @@
 package menu.menuItems.selectionTwo;
 
+import sheet.Sheet;
 import sheet.cell.CellImpl;
 import sheet.SheetImpl;
 import java.util.Scanner;
 
 public class SheetPrinter {
 
-    public static void printSheet(SheetImpl sheet) {
+    public static void printSheet(Sheet sheet) {
         System.out.println("Version: " + sheet.getVersion());
         System.out.println("Sheet Name: " + sheet.getName());
         System.out.print("    |");

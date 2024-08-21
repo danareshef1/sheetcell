@@ -22,6 +22,11 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
+    public SheetImpl getInstance(){
+        return this;
+    }
+
+    @Override
     public int getVersion() {
         return version.getVersionNumber();
     }
@@ -43,6 +48,7 @@ public class SheetImpl implements Sheet {
         return name;
     }
 
+    @Override
     public Layout getSheetSize()
     {
         return size;
@@ -50,14 +56,24 @@ public class SheetImpl implements Sheet {
 
     @Override
     public Cell getCell(int row, int column) {
+        sheetBoundsCheck(row, column);
+
         if(activeCells.get(CoordinateFactory.createCoordinate(row, column)) == null){
             setCell(row, column, null);
         }
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));
     }
 
+    public void sheetBoundsCheck(int row, int column) {
+        if (row > size.getNumRows() || column > size.getNumCols()) {
+            throw new IllegalArgumentException("Those coordinates are out of the sheet's bounds.");
+        }
+    }
+
     @Override
     public void setCell(int row, int column, String value) {
+        sheetBoundsCheck(row, column);
+
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {

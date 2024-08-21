@@ -21,7 +21,13 @@ public class TIMES extends BinaryExpression<Double> implements NumericalExpressi
     @Override
     public Expression<Double> parse(Expression<?>... args) {
         if (args.length != 2) {
-            throw new IllegalArgumentException("PLUS function requires exactly 2 arguments.");
+            throw new IllegalArgumentException("TIMES function requires exactly 2 arguments, but got " + args.length);
+        }
+
+// Check if both arguments are numerical expressions
+        if (!NumericalExpression.isNumericalExpression(args[0]) || !NumericalExpression.isNumericalExpression(args[1])) {
+            throw new IllegalArgumentException("Invalid argument types for TIMES function. Expected numerical expressions, but got "
+                    + args[0].getClass().getSimpleName() + " and " + args[1].getClass().getSimpleName());
         }
 
         return new TIMES((Expression<Double>) args[0], (Expression<Double>) args[1]);

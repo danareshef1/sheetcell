@@ -1,5 +1,6 @@
 package menu.menuItems.selectionThree;
 
+import sheet.Sheet;
 import sheet.SheetImpl;
 import sheet.cell.CellImpl;
 
@@ -7,7 +8,7 @@ import java.util.Scanner;
 
 public class CellPrinter {
 
-    public static void displayCellDetails(SheetImpl sheet) {
+    public static void displayCellDetails(Sheet sheet) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.print("Enter cell identifier (A1, B2..): ");

@@ -1,9 +1,8 @@
 package expression.stringExpression;
 
-import expression.Expression;
+import expression.*;
 import expression.Number;
-import expression.Text;
-import expression.TrinaryExpression;
+import expression.numericalExpression.NumericalExpression;
 import expression.numericalExpression.PLUS;
 import parser.ExpressionParser;
 
@@ -35,7 +34,15 @@ public class SUB extends TrinaryExpression<String, Double> implements StringExpr
     @Override
     public Expression<String> parse(Expression<?>... args) {
         if (args.length != 3) {
-            throw new IllegalArgumentException("SUB function requires exactly 3 arguments.");
+            throw new IllegalArgumentException("SUB function requires exactly 3 arguments, but got " + args.length);
+        }
+
+        // Check if both arguments are numerical expressions
+        if (!StringExpression.isStringExpression(args[0]) || !NumericalExpression.isNumericalExpression(args[1])
+                || !NumericalExpression.isNumericalExpression(args[2])) {
+            throw new IllegalArgumentException("Invalid argument types for CONCAT function. " +
+                    "Expected 1 string expression and 2 more numerical expressions, but got "
+                    + args[0].getClass().getSimpleName() + " , " + args[1].getClass().getSimpleName() + " and " + args[2].getClass().getSimpleName());
         }
 
         Expression<String> textExpr = (Expression<String>) args[0];
