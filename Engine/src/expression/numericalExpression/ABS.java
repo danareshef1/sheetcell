@@ -6,6 +6,8 @@ import expression.UnaryExpression;
 import parser.ExpressionParser;
 import sheet.Sheet;
 
+import java.util.List;
+
 public class ABS extends UnaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
 
     public ABS(Expression<Double> expression1) {
@@ -16,11 +18,6 @@ public class ABS extends UnaryExpression<Double> implements NumericalExpression,
     @Override
     protected Double evaluate(Double e1) {
         return Math.abs(e1);
-    }
-
-    @Override
-    public Expression<Object> evaluate(Sheet sheet) {
-        return null;
     }
 
     @Override

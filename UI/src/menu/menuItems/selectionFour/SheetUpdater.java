@@ -1,9 +1,10 @@
 package menu.menuItems.selectionFour;
 
+import fromEngine.CellDTO;
+import fromEngine.SheetDTO;
 import menu.MenuItem;
 import menu.MenuItemListener;
 import menu.menuItems.selectionTwo.SheetPrinter;
-import sheet.Sheet;
 import sheet.SheetImpl;
 import sheet.cell.Cell;
 
@@ -11,14 +12,11 @@ import java.util.Scanner;
 
 public class SheetUpdater implements MenuItemListener {
 
-    private SheetImpl sheet;
-
-    public SheetUpdater(MenuItem menuItem, SheetImpl sheet) {
+    public SheetUpdater(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);
-        this.sheet = sheet;
     }
 
-    public void updateCell() {
+    public void updateCell(SheetDTO sheet) {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter the cell address (e.g., 4A): ");
         String cellAddress = scanner.nextLine().trim();
@@ -31,11 +29,11 @@ public class SheetUpdater implements MenuItemListener {
             return;
         }
 
-        Cell cell = sheet.getCell(row, column);
+        CellDTO cell = sheet.getCell(row, column);
 
         System.out.println("Cell address: " + cellAddress);
         System.out.println("Original value: " + cell.getOriginalValue());
-        System.out.println("Effective value: " + cell.getEffectiveValue());
+        System.out.println("Effective value: " + cell.getContent());
 
         System.out.print("Enter new value for the cell: ");
         String newValue = scanner.nextLine().trim();
@@ -45,6 +43,7 @@ public class SheetUpdater implements MenuItemListener {
         }
 
         try {
+            cell.cr
             sheet.setCell(row, column, newValue);
             cell.calculateEffectiveValue();
 
@@ -73,10 +72,10 @@ public class SheetUpdater implements MenuItemListener {
         return colPart.charAt(0) - 'A'; // Convert column letter to index
     }
 
-    private void updateDependencies(Cell cell) {
+    private void updateDependencies(CellDTO cell) {
         // Implement logic to recalculate dependencies
         // This will involve recalculating all cells that depend on `cell`
-        for (Cell dependentCell : cell.getDependsOnValues()) {
+        for (CellDTO dependentCell : cell.getDependsOnValues()) {
             dependentCell.calculateEffectiveValue();
             dependentCell.updateVersion();
         }

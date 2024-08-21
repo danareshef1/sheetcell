@@ -5,6 +5,8 @@ import expression.Expression;
 import expression.numericalExpression.NumericalExpression;
 import parser.ExpressionParser;
 
+import java.util.List;
+
 public class CONCAT extends BinaryExpression<String> implements StringExpression, ExpressionParser<Expression<String>> {
 
     public CONCAT(Expression<String> expression1, Expression<String> expression2) {

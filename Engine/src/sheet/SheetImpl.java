@@ -22,6 +22,11 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
+    public Map<Coordinate,Cell> getActiveCells() {
+        return activeCells;
+    }
+
+    @Override
     public SheetImpl getInstance(){
         return this;
     }

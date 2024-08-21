@@ -17,11 +17,6 @@ public class PLUS extends BinaryExpression<Double> implements NumericalExpressio
     }
 
 
-//    @Override
-//    public Double evaluate(List<Double> args) {
-//        return args.get(0) + args.get(1);
-//    }
-
     @Override
     protected Double evaluate(Double e1, Double e2) {
         return e1 + e2;

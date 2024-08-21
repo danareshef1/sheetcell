@@ -5,6 +5,8 @@ import expression.Expression;
 import expression.Number;
 import parser.ExpressionParser;
 
+import java.util.List;
+
 public class POW extends BinaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
 
     public POW(Expression<Double> expression1, Expression<Double> expression2) {
@@ -12,6 +14,7 @@ public class POW extends BinaryExpression<Double> implements NumericalExpression
         super(expression1, expression2);
         this.functionName = "POW";
     }
+
 
     @Override
     protected Double evaluate(Double e1, Double e2) {

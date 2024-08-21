@@ -2,7 +2,6 @@ package files.loader;
 
 import files.jaxb.schema.generated.STLCell;
 import files.jaxb.schema.generated.STLSheet;
-import org.w3c.dom.Document;
 import sheet.CellSize;
 import sheet.Layout;
 
@@ -16,7 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class XmlValidator {
+public class SheetValidator {
 
     public static File validateXmlFile(String filePath) {
         filePath = validateFilePath(filePath);

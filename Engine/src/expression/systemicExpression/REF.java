@@ -293,11 +293,11 @@ public class REF extends UnaryExpression<Object> implements SystemicExpression, 
         return "";
     }
 
-    @Override
-    public Expression<Object> evaluate(Sheet sheet) {
-        // error handling if the cell is empty or not found
-        return (Expression<Object>) sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
-    }
+//    @Override
+//    public Expression<Object> evaluate(Sheet sheet) {
+//        // error handling if the cell is empty or not found
+//        return (Expression<Object>) sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
+//    }
 
 //    @Override
 //    public Expression<String> parse(Expression<?>... args) {

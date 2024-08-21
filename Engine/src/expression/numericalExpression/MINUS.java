@@ -6,6 +6,8 @@ import expression.Number;
 import parser.ExpressionFactory;
 import parser.ExpressionParser;
 
+import java.util.List;
+
 public class MINUS extends BinaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
 
     public MINUS(Expression<Double> expression1, Expression<Double> expression2) {

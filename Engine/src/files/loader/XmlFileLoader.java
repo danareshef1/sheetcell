@@ -5,19 +5,16 @@ import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Unmarshaller;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 
 
 public class XmlFileLoader {
 
     private final static String XML_PACKAGE_NAME = "files.jaxb.schema.generated";
 
-    public static STLSheet validateLoadXmlFile(String filePath) {
+    public static STLSheet validateLoadXmlFile(String filePath) throws IOException, JAXBException {
         try {
-            XmlValidator.validateXmlFile(filePath);
+            SheetValidator.validateXmlFile(filePath);
             InputStream inputStream = new FileInputStream(new File(filePath));
             return deserializeFrom(inputStream);
         } catch (JAXBException e) {

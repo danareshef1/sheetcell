@@ -2,6 +2,8 @@ package expression;
 
 import sheet.Sheet;
 
+import java.util.List;
+
 public abstract class UnaryExpression<T> extends FunctionValidator implements Expression<T> {
 
     private final Expression<T> expression1;
@@ -22,6 +24,4 @@ public abstract class UnaryExpression<T> extends FunctionValidator implements Ex
     public String toString() {
         return "{" + functionName + "," + expression1.evaluate() + "}";
     }
-
-    public abstract Expression<Object> evaluate(Sheet sheet);
 }

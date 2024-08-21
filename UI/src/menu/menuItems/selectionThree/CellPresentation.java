@@ -1,21 +1,23 @@
 package menu.menuItems.selectionThree;
 
+import fromUI.DisplayCellDTO;
 import menu.MenuItem;
 import menu.MenuItemListener;
+import menu.menuItems.selectionOne.LoadFile;
 import sheet.Sheet;
-import sheet.SheetImpl;
 
 public class CellPresentation implements MenuItemListener {
 
-    private Sheet sheet;
-
-        public CellPresentation(MenuItem menuItem, Sheet sheet) {
+    public CellPresentation(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);
-        this.sheet = sheet;
     }
 
     @Override
-    public void reportItemSelectedFromMenu(){
-        CellPrinter.displayCellDetails(sheet);
+    public void reportItemSelectedFromMenu() {
+        try{
+            CellPrinter.displayCellDetails(LoadFile.engine.displaySheet());
+        } catch (Exception e){
+        System.out.println("There is no sheet loaded. Please load a sheet first and then try again.");
+    }
     }
 }

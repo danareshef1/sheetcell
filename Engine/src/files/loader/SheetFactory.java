@@ -1,8 +1,6 @@
-package files.loadFileDTO;
+package files.loader;
 
 import files.jaxb.schema.generated.STLSheet;
-import files.loader.XmlFileLoader;
-import files.loader.XmlValidator;
 import jakarta.xml.bind.JAXBException;
 import sheet.CellSize;
 import sheet.Layout;
@@ -10,14 +8,14 @@ import sheet.SheetImpl;
 
 import java.io.*;
 
-public class XmlFactoryImpl {
+public class SheetFactory {
     private static SheetImpl currentSheet;
     private static Layout layout;
     private static CellSize cellSize;
 
     public static SheetImpl loadFile(String filePath) throws IOException, JAXBException {
         STLSheet stlSheet = XmlFileLoader.validateLoadXmlFile(filePath);
-        XmlValidator.validateSheet(stlSheet);
+        SheetValidator.validateSheet(stlSheet);
         buildSheetFromSTLSheet(stlSheet);
         return currentSheet;
     }

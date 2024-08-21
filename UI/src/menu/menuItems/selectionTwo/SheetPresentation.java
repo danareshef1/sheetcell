@@ -1,21 +1,25 @@
 package menu.menuItems.selectionTwo;
 
+import engine.Engine;
+import engine.EngineImpl;
+import fromEngine.SheetDTO;
 import menu.MenuItem;
 import menu.MenuItemListener;
-import sheet.Sheet;
-import sheet.SheetImpl;
+import menu.menuItems.selectionOne.LoadFile;
 
 public class SheetPresentation implements MenuItemListener {
 
-    private Sheet sheet;
-
-    public SheetPresentation(MenuItem menuItem, Sheet sheet) {
+    public SheetPresentation(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);
-        this.sheet = sheet;
     }
 
     @Override
-    public void reportItemSelectedFromMenu(){
-        SheetPrinter.printSheet(sheet);
+    public void reportItemSelectedFromMenu() {
+        try {
+            SheetDTO sheet = LoadFile.engine.displaySheet();
+            SheetPrinter.printSheet(sheet);
+        } catch (Exception e) {
+            System.out.println("There is no sheet loaded. Please load a sheet first and then try again.");
+        }
     }
 }

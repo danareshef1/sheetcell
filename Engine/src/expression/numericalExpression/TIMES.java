@@ -5,6 +5,8 @@ import expression.Expression;
 import expression.Number;
 import parser.ExpressionParser;
 
+import java.util.List;
+
 public class TIMES extends BinaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
 
     public TIMES(Expression<Double> expression1, Expression<Double> expression2) {

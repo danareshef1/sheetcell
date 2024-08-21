@@ -20,10 +20,6 @@ public abstract class BinaryExpression<T> extends FunctionValidator implements E
 
     protected abstract T evaluate(T evaluate1, T evaluate2);
 
-
-//    @Override
-//    public abstract T evaluate(List<T> args);
-
     @Override
     public String toString() {
         return "{" + functionName + "," + expression1.evaluate() + "," + expression2.evaluate() + "}";
