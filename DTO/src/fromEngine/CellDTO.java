@@ -23,11 +23,10 @@ public class CellDTO {
         this.version = cell.getVersion();
         this.influencingOnValues = setDependsOnValues(cell);
         this.dependsOnValues = setInfluencingOnValues(cell);
-
-        // Calculate effective value
-        if (this.originalValue != null) {
-            Expression<?> expression = cell.getEffectiveValue();
-            this.effectiveValue = (expression != null) ? expression.toString() : null;
+        if (originalValue != null) {
+            this.effectiveValue = cell.getEffectiveValue().toString();
+        } else {
+            this.effectiveValue = null;
         }
     }
 
@@ -94,7 +93,7 @@ public class CellDTO {
     public void updateCell(String newValue) {
         this.originalValue = newValue;
         calculateEffectiveValue();
-        updateVersion();
+        //updateVersion();
     }
 
 //    // Calculate the effective value

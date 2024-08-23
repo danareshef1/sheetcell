@@ -1,10 +1,10 @@
-package sheet;
+package sheet.cellSize;
 
-public class CellSize {
+public class CellSizeImpl implements CellSize {
     private final int colWidth;
     private final int rowHeight;
 
-    public CellSize(int colWidth, int rowHeight) {
+    public CellSizeImpl(int colWidth, int rowHeight) {
         this.colWidth = colWidth;
         this.rowHeight = rowHeight;
     }

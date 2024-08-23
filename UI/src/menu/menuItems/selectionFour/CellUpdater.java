@@ -47,7 +47,7 @@ public class CellUpdater implements MenuItemListener {
 
     private String getCellId(){
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the cell address (e.g., 1A): ");
+        System.out.print("Enter the cell address (e.g., A1): ");
         String cellId = scanner.nextLine().trim();
 
         try {

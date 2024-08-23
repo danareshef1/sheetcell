@@ -1,15 +1,19 @@
-package sheet;
+package sheet.layout;
 
-public class Layout {
+import sheet.cellSize.CellSizeImpl;
+
+import java.io.Serializable;
+
+public class LayoutImpl implements Layout {
     private final int numRows;
     private final int numCols;
-    private final CellSize cellSize;
+    private final CellSizeImpl cellSize;
     private final int minimumRows = 1;
     private final int minimumCols = 1;
     private final int maximumRows = 50;
     private final int maximumCols = 20;
 
-    public Layout(int numRows, int numCols, CellSize cellSize) {
+    public LayoutImpl(int numRows, int numCols, CellSizeImpl cellSize) {
         this.numRows = numRows;
         this.numCols = numCols;
         this.cellSize = cellSize;
@@ -21,7 +25,7 @@ public class Layout {
         return numCols;
     }
 
-    public CellSize getCellSize() {
+    public CellSizeImpl getCellSize() {
         return cellSize;
     }
 

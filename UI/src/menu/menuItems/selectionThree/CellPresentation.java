@@ -20,7 +20,7 @@ public class CellPresentation implements MenuItemListener {
     public void reportItemSelectedFromMenu() {
         Scanner scanner = new Scanner(System.in);
         try{
-            System.out.println("Please enter the cell identity that you wish to display: ");
+            System.out.println("Please enter the cell identity that you wish to display (e.g., A1): ");
             String cellId = scanner.nextLine().trim();
             CellDTO cellDTO = engine.displayCellValue(new DisplayCellDTO(cellId));
             if (cellDTO != null) {

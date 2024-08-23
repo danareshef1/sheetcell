@@ -2,18 +2,19 @@ package files.loader;
 
 import files.jaxb.schema.generated.STLSheet;
 import jakarta.xml.bind.JAXBException;
-import sheet.CellSize;
-import sheet.Layout;
+import sheet.cellSize.CellSizeImpl;
+import sheet.layout.LayoutImpl;
+import sheet.Sheet;
 import sheet.SheetImpl;
 
 import java.io.*;
 
 public class SheetFactory {
-    private static SheetImpl currentSheet;
-    private static Layout layout;
-    private static CellSize cellSize;
+    private static Sheet currentSheet;
+    private static LayoutImpl layout;
+    private static CellSizeImpl cellSize;
 
-    public static SheetImpl loadFile(String filePath) throws IOException, JAXBException {
+    public static Sheet loadFile(String filePath) throws IOException, JAXBException {
         STLSheet stlSheet = XmlFileLoader.validateLoadXmlFile(filePath);
         SheetValidator.validateSheet(stlSheet);
         buildSheetFromSTLSheet(stlSheet);
@@ -21,15 +22,15 @@ public class SheetFactory {
     }
 
     public static void buildSheetFromSTLSheet(STLSheet stlSheet) {
-        cellSize = new CellSize(stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits(),
+        cellSize = new CellSizeImpl(stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits(),
                 stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits());
-        layout = new Layout(stlSheet.getSTLLayout().getRows(), stlSheet.getSTLLayout().getColumns(), cellSize);
+        layout = new LayoutImpl(stlSheet.getSTLLayout().getRows(), stlSheet.getSTLLayout().getColumns(), cellSize);
         currentSheet = new SheetImpl(stlSheet.getName(), layout);
 
         for (int i=0; i<stlSheet.getSTLCells().getSTLCell().size(); i++){
             int[] cellId = cellIdToRowCol(stlSheet.getSTLCells().getSTLCell().get(i).getRow(),
                     stlSheet.getSTLCells().getSTLCell().get(i).getColumn());
-            currentSheet.setCell(cellId[0], cellId[1],
+            currentSheet = currentSheet.updateCellValueAndCalculate(cellId[0], cellId[1],
                     stlSheet.getSTLCells().getSTLCell().get(i).getSTLOriginalValue());
         }
     }

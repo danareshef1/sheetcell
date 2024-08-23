@@ -2,8 +2,8 @@ package files.loader;
 
 import files.jaxb.schema.generated.STLCell;
 import files.jaxb.schema.generated.STLSheet;
-import sheet.CellSize;
-import sheet.Layout;
+import sheet.cellSize.CellSizeImpl;
+import sheet.layout.LayoutImpl;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -52,8 +52,8 @@ public class SheetValidator {
         // Validate the file according to the specified requirements
         int numRows = stlSheet.getSTLLayout().getRows();
         int numCols = stlSheet.getSTLLayout().getColumns();
-        CellSize cellSize = new CellSize(stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits(), stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits());
-        Layout layout = new Layout(numRows, numCols, cellSize);
+        CellSizeImpl cellSize = new CellSizeImpl(stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits(), stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits());
+        LayoutImpl layout = new LayoutImpl(numRows, numCols, cellSize);
         if (!isInBounds(numRows, layout.getMinimumRows(), layout.getMaximumRows())) {
             throw new IllegalArgumentException("Rows number is out of valid range.");
         }

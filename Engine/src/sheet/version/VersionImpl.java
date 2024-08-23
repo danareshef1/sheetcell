@@ -1,10 +1,12 @@
-package sheet;
+package sheet.version;
 
-public class Version {
+import java.io.Serializable;
+
+public class VersionImpl implements Version {
     private int versionNumber;
     private int cellsChanged;
 
-    public Version() {
+    public VersionImpl() {
         this.versionNumber = 1;
         this.cellsChanged = 0;
     }

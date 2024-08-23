@@ -3,15 +3,16 @@ package sheet.cell;
 import expression.Expression;
 import sheet.coordinate.Coordinate;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface Cell {
+public interface Cell extends Serializable {
     Coordinate getCoordinate();
     String getOriginalValue();
     void setCellOriginalValue(String value);
 //    void setCellEffectiveValue(Expression<?> value);
     Expression<?> getEffectiveValue();
-    void calculateEffectiveValue();
+    boolean calculateEffectiveValue();
     int getVersion();
     List<Cell> getDependsOnValues();
     List<Cell> getInfluencingOnValues();

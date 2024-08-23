@@ -4,7 +4,7 @@ import files.loader.SheetFactory;
 import fromEngine.CellDTO;
 import fromEngine.SheetDTO;
 import jakarta.xml.bind.JAXBException;
-import sheet.SheetImpl;
+import sheet.Sheet;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
@@ -19,7 +19,7 @@ import java.io.ObjectOutputStream;
 
 public class EngineImpl implements Engine {
     private static EngineImpl instance;
-    private SheetImpl sheet;
+    private Sheet sheet;
 
     public static synchronized EngineImpl getInstance() {
         if (instance == null) {
@@ -30,7 +30,7 @@ public class EngineImpl implements Engine {
 
     @Override
     public void loadSheetFromFile(LoadSheetDTO loadSheetDTO) throws JAXBException, IOException {
-        this.sheet = SheetFactory.loadFile(LoadSheetDTO.getFilePath());
+        sheet = SheetFactory.loadFile(LoadSheetDTO.getFilePath());
     }
 
 //    @Override
@@ -64,6 +64,26 @@ public class EngineImpl implements Engine {
 
     @Override
     public void updateCellValue(CellUpdateDTO cellUpdateDTO) {
+//        ensureSheetLoaded();
+//        try {
+//            Coordinate parsedCoordinate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
+//            CoordinateFactory.coordinateValidator(cellUpdateDTO.getCellId(), sheet.getSheetSize());
+//
+//            Cell cell = sheet.getCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn());
+//            if (cell == null) {
+//                // Create new cell if it doesn't exist
+//                sheet = sheet.updateCellValueAndCalculate(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue());
+//                cell = new CellImpl(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue(), 0, sheet);
+//            }
+//
+//            CellDTO cellDTO = CellDTO.createCellDTO(cell);
+//            cellDTO.updateCell(cellUpdateDTO.getNewValue());
+//
+//            updateCellAndDependencies(cellDTO);
+//            sheet.incrementVersion();
+//        } catch (Exception e) {
+//            throw new RuntimeException("Error updating cell " + cellUpdateDTO.getCellId() + ": " + e.getMessage());
+//        }
         ensureSheetLoaded();
         try {
             Coordinate parsedCoordinate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
@@ -72,13 +92,13 @@ public class EngineImpl implements Engine {
             Cell cell = sheet.getCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn());
             if (cell == null) {
                 // Create new cell if it doesn't exist
-                cell = new CellImpl(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue());
-                sheet.setCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue());
+                cell = new CellImpl(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue(), 0, sheet);
+                sheet.addCell(parsedCoordinate, cell);  // Explicitly add the new cell to activeCells
+            } else {
+                cell.setCellOriginalValue(cellUpdateDTO.getNewValue());
             }
 
             CellDTO cellDTO = CellDTO.createCellDTO(cell);
-            cellDTO.updateCell(cellUpdateDTO.getNewValue());
-
             updateCellAndDependencies(cellDTO);
             sheet.incrementVersion();
         } catch (Exception e) {

@@ -1,9 +1,8 @@
 package sheet.cell;
 
 import expression.Expression;
-import expression.Text;
 import parser.ExpressionFactory;
-import sheet.Sheet;
+import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateImpl;
 
@@ -19,37 +18,24 @@ public class CellImpl implements Cell {
     private List<Cell> dependsOnValues;
     private List<Cell> influencingOnValues;
     private String cellId;
+    private final SheetReadActions sheet;
 
     // Constructor
-    public CellImpl(int row, int column, String originalValue) {
+    public CellImpl(int row, int column, String originalValue, int version, SheetReadActions sheet) {
+        this.sheet = sheet;
         this.coordinate = new CoordinateImpl(row, column);
         this.originalValue = originalValue;
-        this.version = 0;
+        this.version = version;
         this.dependsOnValues = new ArrayList<>();
         this.influencingOnValues = new ArrayList<>();
-        cellId = (row+1) + "" + colToString(column);
+        this.cellId = (columnToString(column)) + "" + (row+1);
         if (originalValue != null) {
             calculateEffectiveValue();
         }
     }
 
-//    @Override
-//    public CellImpl clone() {
-//        try {
-//            CellImpl cloned = (CellImpl) super.clone();
-//            // Deep copy if necessary (e.g., lists)
-//            cloned.pastValues = new ArrayList<>(this.pastValues);
-//            cloned.dependsOnValues = new ArrayList<>(this.dependsOnValues);
-//            cloned.influencingOnValues = new ArrayList<>(this.influencingOnValues);
-//            // The expression might also need cloning, depending on its immutability
-//            return cloned;
-//        } catch (CloneNotSupportedException e) {
-//            throw new AssertionError(); // Can't happen
-//        }
-//    }
-
-    private char colToString(int row) {
-        return (char)('A' + (row));
+    private char columnToString(int col) {
+        return (char)('A' + (col));
     }
 
     @Override
@@ -70,6 +56,12 @@ public class CellImpl implements Cell {
     @Override
     public void setCellOriginalValue(String value) {
         this.originalValue = value;
+        if (originalValue != null) {
+            calculateEffectiveValue();
+        }
+        else{
+            effectiveValue = null;
+        }
     }
 
     @Override
@@ -122,11 +114,19 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public void calculateEffectiveValue() {
+    public boolean calculateEffectiveValue() {
         // build the expression object out of the original value...
         // it can be {PLUS, 4, 5} OR {CONCAT, "hello", "world"}
         Expression<?> expression = ExpressionFactory.createExpression(originalValue);
-        this.effectiveValue = ExpressionFactory.createExpression(expression.evaluate().toString());
+        Expression<?> newExpression = ExpressionFactory.createExpression(expression.evaluate().toString());
+
+        if(newExpression.equals(expression)){
+            return false;
+        }
+        else {
+            this.effectiveValue = newExpression;
+            return true;
+        }
     }
 }
 

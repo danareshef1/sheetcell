@@ -1,7 +1,7 @@
 package fromEngine;
 
 import fromUI.CellUpdateDTO;
-import sheet.Layout;
+import sheet.layout.LayoutImpl;
 import sheet.Sheet;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
@@ -15,7 +15,7 @@ public class SheetDTO {
     private int version;
     private String name;
     private Map<Coordinate, CellDTO> activeCells;
-    private Layout size;
+    private LayoutImpl size;
 
     public SheetDTO(Sheet sheet) {
         this.name = sheet.getName();
@@ -33,7 +33,7 @@ public class SheetDTO {
     public Map<Coordinate, CellDTO> getActiveCells() {
         return activeCells;
     }
-    public Layout getSheetSize() {
+    public LayoutImpl getSheetSize() {
         return size;
     }
     public CellDTO getCell(int row, int col) {
@@ -62,9 +62,10 @@ public class SheetDTO {
 
         if (cellDTO == null) {
             // Create a new CellDTO if the cell was empty
-            Cell newCell = new CellImpl(row, col, newValue);
+            Cell newCell = new CellImpl(row, col, newValue, 0, (Sheet)this);
             cellDTO = new CellDTO(newCell);
         }
+
         cellDTO.updateCell(newValue);
         this.activeCells.put(coordinate, cellDTO);
         incrementVersion();

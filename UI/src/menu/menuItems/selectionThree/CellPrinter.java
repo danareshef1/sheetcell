@@ -14,6 +14,12 @@ public class CellPrinter {
     }
 
     private static void displayCellInfo(CellDTO cell) {
+        if (cell.getOriginalValue() == null) {
+            System.out.println("This cell is empty.");
+            System.out.println();
+        }
+        System.out.println("Cell details:");
+        System.out.println("------------------");
         System.out.println("Cell ID: " + cell.getCellId());
         System.out.println("Original Value: " + (cell.getOriginalValue() != null ? cell.getOriginalValue() : "None"));
         System.out.println("Effective Value: " + (cell.getContent() != null ? cell.getContent() : "None"));
