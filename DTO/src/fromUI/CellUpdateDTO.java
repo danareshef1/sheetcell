@@ -1,9 +1,10 @@
 package fromUI;
 
+import engine.EngineImpl;
+
 public class CellUpdateDTO {
     private final String cellId;
     private final String newValue;
-
 
     public CellUpdateDTO(String cellId, String newValue) {
         this.cellId = cellId;

@@ -86,40 +86,7 @@ public class SheetImpl implements Sheet {
             activeCells.put(coordinate, cell);
         }
         cell.setCellOriginalValue(value);
+        cell.updateVersion();
     }
-
-
-//    // Convert cell ID to row and column indices
-//    private int[] cellIdToRowCol(String cellId) {
-//        if (cellId == null || cellId.length() < 2) {
-//            throw new IllegalArgumentException("Invalid cell ID");
-//        }
-//
-//        // Extract column part and row part
-//        String colPart = cellId.replaceAll("\\d", ""); // Extracts letters
-//        String rowPart = cellId.replaceAll("\\D", ""); // Extracts digits
-//
-//        // Convert column part to zero-based index
-//        int colIndex = colPart.chars().map(c -> c - 'A').sum();
-//        int rowIndex = Integer.parseInt(rowPart) - 1; // Convert 1-based to 0-based
-//
-//        return new int[]{rowIndex, colIndex};
-//    }
-//
-//    // Get the cell content at specific cell ID
-//    public String getCellContent(String cellId) {
-//        int[] indices = cellIdToRowCol(cellId);
-//        int row = indices[0];
-//        int col = indices[1];
-//
-//        if (row >= 0 && row < size.getNumRows() && col >= 0 && col < size.getNumCols()) {
-//            CellImpl<?> cell = cells[row][col];
-//            if (cell != null) {
-//                Object content = cell.getContent();
-//                return content != null ? content.toString() : "";
-//            }
-//        }
-//        return "";
-//    }
 }
 

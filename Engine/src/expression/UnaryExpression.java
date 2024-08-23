@@ -1,6 +1,7 @@
 package expression;
 
 import sheet.Sheet;
+import sheet.SheetReadActions;
 
 import java.util.List;
 
@@ -8,6 +9,7 @@ public abstract class UnaryExpression<T> extends FunctionValidator implements Ex
 
     private final Expression<T> expression1;
     private final int argsNumberForFunc = 2;
+    private SheetReadActions sheet;
 
     public UnaryExpression(Expression<T> expression1) {
         this.expression1 = expression1;
@@ -15,10 +17,10 @@ public abstract class UnaryExpression<T> extends FunctionValidator implements Ex
 
     @Override
     public T evaluate() {
-        return evaluate(expression1.evaluate());
+        return evaluate(expression1.evaluate(), sheet);
     }
 
-    protected abstract T evaluate(T evaluate1);
+    protected abstract T evaluate(T evaluate1, SheetReadActions sheet);
 
     @Override
     public String toString() {

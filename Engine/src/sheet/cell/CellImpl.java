@@ -27,9 +27,8 @@ public class CellImpl implements Cell {
         this.version = 0;
         this.dependsOnValues = new ArrayList<>();
         this.influencingOnValues = new ArrayList<>();
-        cellId = rowToString(row) + "" + (column+1);
+        cellId = (row+1) + "" + colToString(column);
         if (originalValue != null) {
-            updateVersion();
             calculateEffectiveValue();
         }
     }
@@ -49,7 +48,7 @@ public class CellImpl implements Cell {
 //        }
 //    }
 
-    private char rowToString(int row) {
+    private char colToString(int row) {
         return (char)('A' + (row));
     }
 
@@ -75,7 +74,7 @@ public class CellImpl implements Cell {
 
     @Override
     public Expression<?> getEffectiveValue() {
-        return effectiveValue;
+        return this.effectiveValue;
     }
 
     @Override

@@ -9,7 +9,7 @@ import fromUI.LoadSheetDTO;
 import java.util.Scanner;
 
 public class LoadFile implements MenuItemListener {
-    public static final Engine engine = new EngineImpl();
+    public final Engine engine = EngineImpl.getInstance();
 
     public LoadFile(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);

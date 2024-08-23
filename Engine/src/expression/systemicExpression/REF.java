@@ -275,6 +275,7 @@ import expression.Expression;
 import expression.UnaryExpression;
 import parser.ExpressionParser;
 import sheet.Sheet;
+import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 
@@ -287,10 +288,15 @@ public class REF extends UnaryExpression<Object> implements SystemicExpression, 
         this.coordinate = coordinate;
     }
 
-
     @Override
-    protected Object evaluate(Object expression) {
-        return "";
+    public Object evaluate(Object expression, SheetReadActions sheet) {
+        String celId = CoordinateFactory.createCoordinate(coordinate.getRow(), coordinate.getColumn()).toString();
+        CoordinateFactory.coordinateValidator(celId, sheet.getSheetSize());
+        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getOriginalValue() == null)
+        {
+            throw new IllegalArgumentException("Cell " + celId + " is empty. Cant be referenced to an empty cell.");
+        }
+        return sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
     }
 
 //    @Override
@@ -322,13 +328,10 @@ public class REF extends UnaryExpression<Object> implements SystemicExpression, 
         }
 
         // verify indeed argument represents a reference to a cell and create a Coordinate instance. if not ok returns a null. need to verify it
-        Coordinate target = CoordinateFactory.from(args[0].toString().trim());
+        Coordinate target = CoordinateFactory.cellIdToRowCol(args[0].toString().trim());
         if (target == null) {
             throw new IllegalArgumentException("Invalid argument for REF function. Expected a valid cell reference, but got " + args[0]);
         }
-
-        // should verify if the coordinate is within boundaries of the sheet ?
-        // ...
 
         return new REF(target);
     }

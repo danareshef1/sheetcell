@@ -1,12 +1,16 @@
 package menu.menuItems.selectionThree;
 
+import engine.Engine;
+import engine.EngineImpl;
+import fromEngine.CellDTO;
 import fromUI.DisplayCellDTO;
 import menu.MenuItem;
 import menu.MenuItemListener;
-import menu.menuItems.selectionOne.LoadFile;
-import sheet.Sheet;
+
+import java.util.Scanner;
 
 public class CellPresentation implements MenuItemListener {
+    public final Engine engine = EngineImpl.getInstance();
 
     public CellPresentation(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);
@@ -14,10 +18,18 @@ public class CellPresentation implements MenuItemListener {
 
     @Override
     public void reportItemSelectedFromMenu() {
+        Scanner scanner = new Scanner(System.in);
         try{
-            CellPrinter.displayCellDetails(LoadFile.engine.displaySheet());
+            System.out.println("Please enter the cell identity that you wish to display: ");
+            String cellId = scanner.nextLine().trim();
+            CellDTO cellDTO = engine.displayCellValue(new DisplayCellDTO(cellId));
+            if (cellDTO != null) {
+                CellPrinter.displayCellDetails(cellDTO);
+            } else {
+                System.out.println("Cell " + cellId + " not found.");
+            }
         } catch (Exception e){
-        System.out.println("There is no sheet loaded. Please load a sheet first and then try again.");
-    }
+            System.out.println(e.getMessage());
+        }
     }
 }

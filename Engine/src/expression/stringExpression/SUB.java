@@ -5,6 +5,8 @@ import expression.Number;
 import expression.numericalExpression.NumericalExpression;
 import expression.numericalExpression.PLUS;
 import parser.ExpressionParser;
+import sheet.Sheet;
+import sheet.SheetReadActions;
 
 public class SUB extends TrinaryExpression<String, Double> implements StringExpression, ExpressionParser<Expression<String>> {
 
@@ -15,7 +17,7 @@ public class SUB extends TrinaryExpression<String, Double> implements StringExpr
     }
 
     @Override
-    protected String evaluate(String e1, Double e2, Double e3) {
+    protected String evaluate(String e1, Double e2, Double e3, SheetReadActions sheet) {
         if (e1 == null) {
             throw new IllegalArgumentException("Source string cannot be null");
         }

@@ -5,6 +5,8 @@ import expression.Expression;
 import expression.Number;
 import parser.ExpressionFactory;
 import parser.ExpressionParser;
+import sheet.Sheet;
+import sheet.SheetReadActions;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class MINUS extends BinaryExpression<Double> implements NumericalExpressi
     }
 
     @Override
-    protected Double evaluate(Double e1, Double e2) {
+    protected Double evaluate(Double e1, Double e2, SheetReadActions sheet) {
         return e1 - e2;
     }
 

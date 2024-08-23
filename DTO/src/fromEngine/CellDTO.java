@@ -3,7 +3,9 @@ package fromEngine;
 import java.util.ArrayList;
 import java.util.List;
 
+import expression.Expression;
 import fromUI.CellUpdateDTO;
+import parser.ExpressionFactory;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
 
@@ -19,9 +21,14 @@ public class CellDTO {
         this.cellId = cell.getCellId();
         this.originalValue = cell.getOriginalValue();
         this.version = cell.getVersion();
-        this.effectiveValue = cell.getEffectiveValue().toString();
         this.influencingOnValues = setDependsOnValues(cell);
         this.dependsOnValues = setInfluencingOnValues(cell);
+
+        // Calculate effective value
+        if (this.originalValue != null) {
+            Expression<?> expression = cell.getEffectiveValue();
+            this.effectiveValue = (expression != null) ? expression.toString() : null;
+        }
     }
 
     private List<CellDTO> setDependsOnValues(Cell currentCell) {
@@ -70,8 +77,29 @@ public class CellDTO {
         this.version++;
     }
 
-    public CellImpl updateCell(int row, int col) {
-        String cellId = CellUpdateDTO.getCellId();
+//    public void calculateEffectiveValue() {
+//        this.effectiveValue = calculateEffectiveValue(this.originalValue);
+//    }
 
+    public void calculateEffectiveValue() {
+        if (this.originalValue != null) {
+            Expression<?> expression = ExpressionFactory.createExpression(this.originalValue);
+            this.effectiveValue = (expression != null) ? expression.evaluate().toString() : null;
+        } else {
+            this.effectiveValue = null;
+        }
     }
+
+    // Update the cell's value and recalculate its effective value
+    public void updateCell(String newValue) {
+        this.originalValue = newValue;
+        calculateEffectiveValue();
+        updateVersion();
+    }
+
+//    // Calculate the effective value
+//    private String calculateEffectiveValue(String value) {
+//        Expression<?> expression = ExpressionFactory.createExpression(value);
+//        return expression.evaluate().toString();
+//    }
 }

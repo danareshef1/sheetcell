@@ -6,6 +6,8 @@ import expression.stringExpression.StringExpression;
 import parser.ExpressionFactory;
 import parser.ExpressionParser;
 import parser.StringValidator;
+import sheet.Sheet;
+import sheet.SheetReadActions;
 
 import java.util.List;
 
@@ -18,7 +20,7 @@ public class PLUS extends BinaryExpression<Double> implements NumericalExpressio
 
 
     @Override
-    protected Double evaluate(Double e1, Double e2) {
+    protected Double evaluate(Double e1, Double e2, SheetReadActions sheet) {
         return e1 + e2;
     }
 

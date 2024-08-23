@@ -4,6 +4,8 @@ import expression.BinaryExpression;
 import expression.Expression;
 import expression.numericalExpression.NumericalExpression;
 import parser.ExpressionParser;
+import sheet.Sheet;
+import sheet.SheetReadActions;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class CONCAT extends BinaryExpression<String> implements StringExpression
     }
 
     @Override
-    protected String evaluate(String e1, String e2) {
+    protected String evaluate(String e1, String e2, SheetReadActions sheet) {
         return e1 + e2;
     }
 

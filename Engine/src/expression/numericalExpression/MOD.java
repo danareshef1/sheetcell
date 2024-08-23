@@ -4,6 +4,8 @@ import expression.BinaryExpression;
 import expression.Expression;
 import expression.Number;
 import parser.ExpressionParser;
+import sheet.Sheet;
+import sheet.SheetReadActions;
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class MOD extends BinaryExpression<Double> implements NumericalExpression
     }
 
     @Override
-    protected Double evaluate(Double e1, Double e2) {
+    protected Double evaluate(Double e1, Double e2, SheetReadActions sheet) {
         return e1 % e2;
     }
 

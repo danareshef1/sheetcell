@@ -4,6 +4,8 @@ import expression.BinaryExpression;
 import expression.Expression;
 import expression.Number;
 import parser.ExpressionParser;
+import sheet.Sheet;
+import sheet.SheetReadActions;
 
 import java.util.List;
 
@@ -15,7 +17,7 @@ public class DIVIDE extends BinaryExpression<Double> implements NumericalExpress
     }
 
     @Override
-    protected Double evaluate(Double e1, Double e2) {
+    protected Double evaluate(Double e1, Double e2, SheetReadActions sheet) {
         if (e1 == null || e2 == null) {
             throw new IllegalArgumentException("Arguments cannot be null");
         }

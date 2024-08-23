@@ -1,10 +1,14 @@
 package menu;
 
+import engine.Engine;
+import engine.EngineImpl;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class MenuItem {
+    public static final Engine engine = new EngineImpl();
     private static final char FINISH_OPTION = '6';
     private final String title;
     private final MenuItem prevMenuItem;

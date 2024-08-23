@@ -1,8 +1,10 @@
 package fromEngine;
 
+import fromUI.CellUpdateDTO;
 import sheet.Layout;
 import sheet.Sheet;
 import sheet.cell.Cell;
+import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 
@@ -52,5 +54,29 @@ public class SheetDTO {
             return null;
         }
         return new SheetDTO(sheet);
+    }
+
+    public CellUpdateDTO updateCell(int row, int col, String newValue) {
+        Coordinate coordinate = CoordinateFactory.createCoordinate(row, col);
+        CellDTO cellDTO = activeCells.get(coordinate);
+
+        if (cellDTO == null) {
+            // Create a new CellDTO if the cell was empty
+            Cell newCell = new CellImpl(row, col, newValue);
+            cellDTO = new CellDTO(newCell);
+        }
+        cellDTO.updateCell(newValue);
+        this.activeCells.put(coordinate, cellDTO);
+        incrementVersion();
+        return new CellUpdateDTO(coordinate.toString(), newValue);
+    }
+
+    // Increment sheet version
+    public void incrementVersion() {
+        this.version++;
+    }
+
+    public void incrementCellChanged() {
+        ////to do
     }
 }
