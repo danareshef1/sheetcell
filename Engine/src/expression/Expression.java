@@ -1,11 +1,13 @@
 package expression;
 
 import sheet.Sheet;
+import sheet.SheetReadActions;
+import sheet.cell.EffectiveValue;
 
 import java.io.Serializable;
-import java.util.List;
+import sheet.cell.CellType;
 
-@FunctionalInterface
-public interface Expression<T> extends Serializable {
-    T evaluate();
+public interface Expression extends Serializable {
+    EffectiveValue evaluate(SheetReadActions sheet);
+    CellType getFunctionResultType();
 }

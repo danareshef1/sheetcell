@@ -13,9 +13,7 @@ import fromUI.CellUpdateDTO;
 import fromUI.DisplayCellDTO;
 import fromUI.LoadSheetDTO;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 
 public class EngineImpl implements Engine {
     private static EngineImpl instance;
@@ -33,86 +31,13 @@ public class EngineImpl implements Engine {
         sheet = SheetFactory.loadFile(LoadSheetDTO.getFilePath());
     }
 
-//    @Override
-//    public void updateCellValue(CellUpdateDTO cellUpdateDTO) {
-////        Coordinate parsedCoordinate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
-////        CoordinateFactory.coordinateValidator(cellUpdateDTO.getCellId(), sheet.getSheetSize());
-////        Cell cell = sheet.getCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn());
-////        CellDTO updatedCellDTO = CellDTO.createCellDTO(cell);
-////        updateCellAndDependencies(updatedCellDTO);
-//        ensureSheetLoaded();
-//        try {
-//            Coordinate parsedCoordinate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
-//            CoordinateFactory.coordinateValidator(cellUpdateDTO.getCellId(), sheet.getSheetSize());
-//
-//            Cell cell = sheet.getCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn());
-//            CellDTO cellDTO = CellDTO.createCellDTO(cell);
-//            if (cellDTO == null) {
-//                cellDTO = new CellDTO(new CellImpl(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue()));
-//                sheet.getActiveCells().put(parsedCoordinate, (Cell)cellDTO);
-//            }
-//
-//            cellDTO.updateCell(cellUpdateDTO.getNewValue());
-//            sheet.setCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue());
-//            sheet.incrementVersion();
-//
-//            updateCellAndDependencies(cellDTO);
-//        } catch (Exception e) {
-//            throw new RuntimeException("Error updating cell " + cellUpdateDTO.getCellId());
-//        }
-//    }
-
     @Override
     public void updateCellValue(CellUpdateDTO cellUpdateDTO) {
-//        ensureSheetLoaded();
-//        try {
-//            Coordinate parsedCoordinate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
-//            CoordinateFactory.coordinateValidator(cellUpdateDTO.getCellId(), sheet.getSheetSize());
-//
-//            Cell cell = sheet.getCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn());
-//            if (cell == null) {
-//                // Create new cell if it doesn't exist
-//                sheet = sheet.updateCellValueAndCalculate(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue());
-//                cell = new CellImpl(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue(), 0, sheet);
-//            }
-//
-//            CellDTO cellDTO = CellDTO.createCellDTO(cell);
-//            cellDTO.updateCell(cellUpdateDTO.getNewValue());
-//
-//            updateCellAndDependencies(cellDTO);
-//            sheet.incrementVersion();
-//        } catch (Exception e) {
-//            throw new RuntimeException("Error updating cell " + cellUpdateDTO.getCellId() + ": " + e.getMessage());
-//        }
         ensureSheetLoaded();
-        try {
-            Coordinate parsedCoordinate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
-            CoordinateFactory.coordinateValidator(cellUpdateDTO.getCellId(), sheet.getSheetSize());
-
-            Cell cell = sheet.getCell(parsedCoordinate.getRow(), parsedCoordinate.getColumn());
-            if (cell == null) {
-                // Create new cell if it doesn't exist
-                cell = new CellImpl(parsedCoordinate.getRow(), parsedCoordinate.getColumn(), cellUpdateDTO.getNewValue(), 0, sheet);
-                sheet.addCell(parsedCoordinate, cell);  // Explicitly add the new cell to activeCells
-            } else {
-                cell.setCellOriginalValue(cellUpdateDTO.getNewValue());
-            }
-
-            CellDTO cellDTO = CellDTO.createCellDTO(cell);
-            updateCellAndDependencies(cellDTO);
-            sheet.incrementVersion();
-        } catch (Exception e) {
-            throw new RuntimeException("Error updating cell " + cellUpdateDTO.getCellId() + ": " + e.getMessage());
-        }
+        Coordinate coordinateToUpdate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId());
+        this.sheet = sheet.updateCellValueAndCalculate(coordinateToUpdate.getRow(), coordinateToUpdate.getColumn(), cellUpdateDTO.getNewValue());
     }
 
-    private void updateCellAndDependencies(CellDTO cellDTO) {
-        cellDTO.calculateEffectiveValue();
-        for (CellDTO dependentCell : cellDTO.getDependsOnValues()) {
-            dependentCell.calculateEffectiveValue();
-            dependentCell.updateVersion();
-        }
-    }
 
     @Override
     public CellDTO displayCellValue(DisplayCellDTO displayCellDTO) {

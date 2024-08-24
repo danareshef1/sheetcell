@@ -5,6 +5,8 @@ import sheet.layout.LayoutImpl;
 import java.util.HashMap;
 import java.util.Map;
 
+import static sheet.cell.CellImpl.columnToString;
+
 public class CoordinateFactory {
 
     private static Map<String, Coordinate> cachedCoordinates = new HashMap<>();
@@ -53,8 +55,8 @@ public class CoordinateFactory {
                     " to " + sheetSize.getNumRows() + ",and you entered " + coordinate.getRow());
         }
         if (coordinate.getColumn() < sheetSize.getMinimumCols()-1 || coordinate.getColumn() > sheetSize.getNumCols()-1) {
-            throw new IllegalArgumentException("Column number is out of sheet range. The range is:" + sheetSize.getMinimumCols() +
-                    " to " + sheetSize.getNumCols() + ",and you entered " + coordinate.getColumn());
+            throw new IllegalArgumentException("Column number is out of sheet range. The range is:" + columnToString(sheetSize.getMinimumCols()-1) +
+                    " to " + columnToString(sheetSize.getNumCols()-1) + ",and you entered " + columnToString(coordinate.getColumn()));
         }
     }
 }

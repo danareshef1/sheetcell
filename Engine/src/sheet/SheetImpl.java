@@ -104,9 +104,12 @@ public class SheetImpl implements Sheet {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
 
         SheetImpl newSheetVersion = copySheet();
-        Cell newCell = new CellImpl(row, column, value, 0, newSheetVersion);
+        int newVersionValue = newSheetVersion.getVersion()+1;
+        Cell newCell = new CellImpl(row, column, value, newVersionValue, newSheetVersion);
         newSheetVersion.addCell(coordinate, newCell);
-
+        if (value.isEmpty()){
+            newSheetVersion.activeCells.remove(coordinate);
+        }
         try {
             List<Cell> cellsThatHaveChanged = newSheetVersion
                             .orderCellsForCalculation()
@@ -119,6 +122,7 @@ public class SheetImpl implements Sheet {
             //cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
             //cellsThatHaveChanged.forEach(Cell::updateVersion);
             newCell.updateVersion();
+            newSheetVersion.incrementVersion();
 
             return newSheetVersion;
         } catch (Exception e) {

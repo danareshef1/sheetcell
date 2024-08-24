@@ -55,29 +55,4 @@ public class SheetDTO {
         }
         return new SheetDTO(sheet);
     }
-
-    public CellUpdateDTO updateCell(int row, int col, String newValue) {
-        Coordinate coordinate = CoordinateFactory.createCoordinate(row, col);
-        CellDTO cellDTO = activeCells.get(coordinate);
-
-        if (cellDTO == null) {
-            // Create a new CellDTO if the cell was empty
-            Cell newCell = new CellImpl(row, col, newValue, 0, (Sheet)this);
-            cellDTO = new CellDTO(newCell);
-        }
-
-        cellDTO.updateCell(newValue);
-        this.activeCells.put(coordinate, cellDTO);
-        incrementVersion();
-        return new CellUpdateDTO(coordinate.toString(), newValue);
-    }
-
-    // Increment sheet version
-    public void incrementVersion() {
-        this.version++;
-    }
-
-    public void incrementCellChanged() {
-        ////to do
-    }
 }

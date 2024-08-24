@@ -1,41 +1,56 @@
 package expression.numericalExpression;
 
-import expression.BinaryExpression;
 import expression.Expression;
-import expression.Number;
+import expression.functionsValidators.FunctionValidator;
 import parser.ExpressionParser;
-import sheet.Sheet;
 import sheet.SheetReadActions;
+import sheet.cell.CellType;
+import sheet.cell.EffectiveValue;
+import sheet.cell.EffectiveValueImpl;
 
-import java.util.List;
 
-public class DIVIDE extends BinaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
+public class DIVIDE extends FunctionValidator implements NumericalExpression, ExpressionParser<Expression> {
+    private final Expression expression1;
+    private final Expression expression2;
 
-    public DIVIDE(Expression<Double> expression1, Expression<Double> expression2) {
-        super(expression1, expression2);
+    public DIVIDE(Expression expression1, Expression expression2) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
         this.functionName = "DIVIDE";
     }
 
     @Override
-    protected Double evaluate(Double e1, Double e2, SheetReadActions sheet) {
-        if (e1 == null || e2 == null) {
-            throw new IllegalArgumentException("Arguments cannot be null");
-        }
-        return e2 == 0 ? Double.NaN : e1 / e2;
+    public EffectiveValue evaluate(SheetReadActions sheet) {
+        EffectiveValue leftValue = expression1.evaluate(sheet);
+        EffectiveValue rightValue = expression2.evaluate(sheet);
+
+        double result = leftValue.extractValueWithExpectation(Double.class) / rightValue.extractValueWithExpectation(Double.class);
+
+        return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
 
     @Override
-    public Expression<Double> parse(Expression<?>... args) {
+    public CellType getFunctionResultType() {
+        return CellType.NUMERIC;
+    }
+
+    @Override
+    public Expression parse(Expression... args) {
         if (args.length != 2) {
             throw new IllegalArgumentException("DIVIDE function requires exactly 2 arguments, but got " + args.length);
         }
 
-// Check if both arguments are numerical expressions
-        if (!NumericalExpression.isNumericalExpression(args[0]) || !NumericalExpression.isNumericalExpression(args[1])) {
-            throw new IllegalArgumentException("Invalid argument types for DIVIDE function. Expected numerical expressions, but got "
-                    + args[0].getClass().getSimpleName() + " and " + args[1].getClass().getSimpleName());
+        // Check if both arguments are numerical expressions
+        if ((!args[0].getFunctionResultType().equals(CellType.NUMERIC) || !args[1].getFunctionResultType().equals(CellType.NUMERIC))
+                && (!args[0].getFunctionResultType().equals(CellType.UNKNOWN) || !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
+            throw new IllegalArgumentException("Invalid argument types for DIVIDE function. Expected NUMERIC, but got " + args[0].getFunctionResultType()
+                    + " and " + args[1].getFunctionResultType());
         }
 
-        return new DIVIDE((Expression<Double>) args[0], (Expression<Double>) args[1]);
+        return new DIVIDE(args[0], args[1]);
+    }
+
+    public String toString(SheetReadActions sheet) {
+        return "{" + functionName + "," + expression1.evaluate(sheet) + "," + expression2.evaluate(sheet) + "}";
     }
 }

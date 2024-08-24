@@ -2,56 +2,75 @@ package expression.stringExpression;
 
 import expression.*;
 import expression.Number;
+import expression.functionsValidators.FunctionValidator;
 import expression.numericalExpression.NumericalExpression;
 import expression.numericalExpression.PLUS;
 import parser.ExpressionParser;
 import sheet.Sheet;
 import sheet.SheetReadActions;
+import sheet.cell.CellType;
+import sheet.cell.EffectiveValue;
+import sheet.cell.EffectiveValueImpl;
 
-public class SUB extends TrinaryExpression<String, Double> implements StringExpression, ExpressionParser<Expression<String>> {
+public class SUB extends FunctionValidator implements StringExpression, ExpressionParser<Expression> {
+    private final Expression expression1;
+    private final Expression expression2;
+    private final Expression expression3;
 
-    public SUB(Expression<String> expression1, Expression<Double> expression2, Expression<Double> expression3) {
-
-        super(expression1, expression2, expression3);
+    public SUB(Expression expression1, Expression expression2, Expression expression3) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
+        this.expression3 = expression3;
         this.functionName = "SUB";
     }
 
     @Override
-    protected String evaluate(String e1, Double e2, Double e3, SheetReadActions sheet) {
-        if (e1 == null) {
+    public EffectiveValue evaluate(SheetReadActions sheet) {
+        EffectiveValue leftValue = expression1.evaluate(sheet);
+        EffectiveValue startValue = expression2.evaluate(sheet);
+        EffectiveValue endValue = expression3.evaluate(sheet);
+
+        String sourceString = leftValue.extractValueWithExpectation(String.class);
+        int start = startValue.extractValueWithExpectation(Integer.class);
+        int end = endValue.extractValueWithExpectation(Integer.class);
+
+        if (sourceString == null) {
             throw new IllegalArgumentException("Source string cannot be null");
         }
-
-        int start = e2.intValue();
-        int end = e3.intValue();
-
-        // Check if the indices are within the valid range
-        if (start < 0 || end > e1.length() || start > end) {
-            return "!UNDEFINED!";
+        if (start < 0 || end > sourceString.length() || start > end) {
+            return new EffectiveValueImpl(CellType.STRING, "!UNDEFINED!");
         }
-        return e1.substring(start, end);
+
+        String result = sourceString.substring(start, end);
+
+        return new EffectiveValueImpl(CellType.STRING, result);
     }
 
 
     @Override
-    public Expression<String> parse(Expression<?>... args) {
+    public CellType getFunctionResultType() {
+        return CellType.STRING;
+    }
+
+    @Override
+    public Expression parse(Expression... args) {
         if (args.length != 3) {
             throw new IllegalArgumentException("SUB function requires exactly 3 arguments, but got " + args.length);
         }
 
         // Check if both arguments are numerical expressions
-        if (!StringExpression.isStringExpression(args[0]) || !NumericalExpression.isNumericalExpression(args[1])
-                || !NumericalExpression.isNumericalExpression(args[2])) {
-            throw new IllegalArgumentException("Invalid argument types for CONCAT function. " +
-                    "Expected 1 string expression and 2 more numerical expressions, but got "
-                    + args[0].getClass().getSimpleName() + " , " + args[1].getClass().getSimpleName() + " and " + args[2].getClass().getSimpleName());
+        if ((!args[0].getFunctionResultType().equals(CellType.STRING) || !args[1].getFunctionResultType().equals(CellType.NUMERIC)
+                || !args[2].getFunctionResultType().equals(CellType.NUMERIC)) && (!args[0].getFunctionResultType().equals(CellType.UNKNOWN)
+                || !args[1].getFunctionResultType().equals(CellType.UNKNOWN) || !args[2].getFunctionResultType().equals(CellType.UNKNOWN))) {
+            throw new IllegalArgumentException("Invalid argument types for SUB function. Expected STRING, but got " + args[0].getFunctionResultType()
+                    + " , " + args[1].getFunctionResultType() + " and " + args[2].getFunctionResultType());
         }
 
-        Expression<String> textExpr = (Expression<String>) args[0];
-        Expression<Double> startExpr = (Expression<Double>) args[1];
-        Expression<Double> endExpr = (Expression<Double>) args[2];
+        return new SUB(args[0], args[1], args[2]);
+    }
 
-        return new SUB(textExpr, startExpr, endExpr);
+    public String toString(SheetReadActions sheet) {
+        return "{" + functionName + "," + expression1.evaluate(sheet) + "," + expression2.evaluate(sheet) + "," + expression3.evaluate(sheet) + "}";
     }
 }
 

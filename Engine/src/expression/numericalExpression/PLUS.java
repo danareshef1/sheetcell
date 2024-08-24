@@ -1,50 +1,56 @@
 package expression.numericalExpression;
 
-import expression.*;
-import expression.Number;
-import expression.stringExpression.StringExpression;
-import parser.ExpressionFactory;
+import expression.Expression;
+import expression.functionsValidators.FunctionValidator;
 import parser.ExpressionParser;
-import parser.StringValidator;
-import sheet.Sheet;
 import sheet.SheetReadActions;
+import sheet.cell.CellType;
+import sheet.cell.EffectiveValue;
+import sheet.cell.EffectiveValueImpl;
 
-import java.util.List;
 
-public class PLUS extends BinaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
+public class PLUS extends FunctionValidator implements NumericalExpression, ExpressionParser<Expression> {
+    private final Expression expression1;
+    private final Expression expression2;
 
-    public PLUS(Expression<Double> expression1, Expression<Double> expression2) {
-        super(expression1, expression2);
+    public PLUS(Expression expression1, Expression expression2) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
         this.functionName = "PLUS";
     }
 
-
     @Override
-    protected Double evaluate(Double e1, Double e2, SheetReadActions sheet) {
-        return e1 + e2;
+    public EffectiveValue evaluate(SheetReadActions sheet) {
+        EffectiveValue leftValue = expression1.evaluate(sheet);
+        EffectiveValue rightValue = expression2.evaluate(sheet);
+
+        double result = leftValue.extractValueWithExpectation(Double.class) + rightValue.extractValueWithExpectation(Double.class);
+
+        return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
 
-//    @Override
-//    public Expression<Double> parse(String expression) {
-//        String[] parts = functionParts(expression);
-//
-//        double operand1 = Double.parseDouble(parts[1].trim());
-//        double operand2 = Double.parseDouble(parts[2].trim());
-//
-//        return new PLUS(new Number(operand1), new Number(operand2));
-//    }
+    @Override
+    public CellType getFunctionResultType() {
+        return CellType.NUMERIC;
+    }
 
-    public Expression<Double> parse(Expression<?>... args) {
+    @Override
+    public Expression parse(Expression... args) {
         if (args.length != 2) {
             throw new IllegalArgumentException("PLUS function requires exactly 2 arguments, but got " + args.length);
         }
 
         // Check if both arguments are numerical expressions
-        if (!NumericalExpression.isNumericalExpression(args[0]) || !NumericalExpression.isNumericalExpression(args[1])) {
-            throw new IllegalArgumentException("Invalid argument types for PLUS function. Expected numerical expressions, but got "
-                    + args[0].getClass().getSimpleName() + " and " + args[1].getClass().getSimpleName());
+        if ((!args[0].getFunctionResultType().equals(CellType.NUMERIC) || !args[1].getFunctionResultType().equals(CellType.NUMERIC))
+                && (!args[0].getFunctionResultType().equals(CellType.UNKNOWN) || !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
+            throw new IllegalArgumentException("Invalid argument types for PLUS function. Expected NUMERIC, but got " + args[0].getFunctionResultType()
+                    + " and " + args[1].getFunctionResultType());
         }
 
-        return new PLUS((Expression<Double>) args[0], (Expression<Double>) args[1]);
+        return new PLUS(args[0], args[1]);
+    }
+
+    public String toString(SheetReadActions sheet) {
+        return "{" + functionName + "," + expression1.evaluate(sheet) + "," + expression2.evaluate(sheet) + "}";
     }
 }

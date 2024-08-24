@@ -6,8 +6,10 @@ import java.util.List;
 import expression.Expression;
 import fromUI.CellUpdateDTO;
 import parser.ExpressionFactory;
+import sheet.SheetReadActions;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
+import sheet.cell.EffectiveValue;
 
 public class CellDTO {
     private String effectiveValue = null;
@@ -24,7 +26,7 @@ public class CellDTO {
         this.influencingOnValues = setDependsOnValues(cell);
         this.dependsOnValues = setInfluencingOnValues(cell);
         if (originalValue != null) {
-            this.effectiveValue = cell.getEffectiveValue().toString();
+            this.effectiveValue = cell.getEffectiveValue().getValue().toString();
         } else {
             this.effectiveValue = null;
         }
@@ -72,29 +74,26 @@ public class CellDTO {
         return cellId;
     }
 
-    public void updateVersion() {
-        this.version++;
-    }
-
 //    public void calculateEffectiveValue() {
 //        this.effectiveValue = calculateEffectiveValue(this.originalValue);
 //    }
 
-    public void calculateEffectiveValue() {
-        if (this.originalValue != null) {
-            Expression<?> expression = ExpressionFactory.createExpression(this.originalValue);
-            this.effectiveValue = (expression != null) ? expression.evaluate().toString() : null;
-        } else {
-            this.effectiveValue = null;
-        }
-    }
+//    public void calculateEffectiveValue(SheetReadActions sheet) {
+//        if (this.originalValue != null) {
+//            Expression expression = ExpressionFactory.createExpression(this.originalValue);
+//            EffectiveValue evaluatedValue = expression.evaluate(sheet);
+//            this.effectiveValue = (evaluatedValue != null) ? evaluatedValue.toString() : null;
+//        } else {
+//            this.effectiveValue = null;
+//        }
+//    }
 
-    // Update the cell's value and recalculate its effective value
-    public void updateCell(String newValue) {
-        this.originalValue = newValue;
-        calculateEffectiveValue();
-        //updateVersion();
-    }
+//    // Update the cell's value and recalculate its effective value
+//    public void updateCell(String newValue, SheetReadActions sheet) {
+//        this.originalValue = newValue;
+//        calculateEffectiveValue(sheet);
+//        // updateVersion();
+//    }
 
 //    // Calculate the effective value
 //    private String calculateEffectiveValue(String value) {

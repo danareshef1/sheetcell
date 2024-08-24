@@ -2,6 +2,7 @@ package parser;
 
 import expression.*;
 import expression.Number;
+import expression.functionsValidators.FunctionValidator;
 import expression.numericalExpression.*;
 import expression.stringExpression.CONCAT;
 import expression.stringExpression.SUB;
@@ -27,7 +28,7 @@ public class ExpressionFactory {
         parsers.put("REF", new REF(null));
     }
 
-    public static Expression<?> createExpression(String expression) {
+    public static Expression createExpression(String expression) {
         expression = expression.trim();
 
         if (StringValidator.isNumber(expression))
@@ -40,7 +41,7 @@ public class ExpressionFactory {
             return new Text(expression);
     }
 
-    public static Expression<?> parseFunction(String expression) {
+    public static Expression parseFunction(String expression) {
         String functionName = FunctionValidator.getFunctionName(expression);
         ExpressionParser<?> parser = parsers.get(functionName);
 
@@ -53,7 +54,7 @@ public class ExpressionFactory {
             String[] args = validator.functionParts(expression);
 
             // Parse each argument recursively
-            Expression<?>[] parsedArgs = new Expression<?>[args.length - 1];
+            Expression[] parsedArgs = new Expression[args.length - 1];
             for (int i = 1; i < args.length; i++) {
                 parsedArgs[i - 1] = createExpression(args[i].trim());
             }

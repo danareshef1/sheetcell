@@ -11,7 +11,7 @@ public interface Cell extends Serializable {
     String getOriginalValue();
     void setCellOriginalValue(String value);
 //    void setCellEffectiveValue(Expression<?> value);
-    Expression<?> getEffectiveValue();
+    EffectiveValue getEffectiveValue();
     boolean calculateEffectiveValue();
     int getVersion();
     List<Cell> getDependsOnValues();

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class CellImpl implements Cell {
     private final Coordinate coordinate;
-    private Expression<?> effectiveValue = null;
+    private EffectiveValue effectiveValue = null;
     private String originalValue;
     private int version;
     private List<Cell> pastValues;
@@ -34,7 +34,7 @@ public class CellImpl implements Cell {
         }
     }
 
-    private char columnToString(int col) {
+    public static char columnToString(int col) {
         return (char)('A' + (col));
     }
 
@@ -65,7 +65,7 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public Expression<?> getEffectiveValue() {
+    public EffectiveValue getEffectiveValue() {
         return this.effectiveValue;
     }
 
@@ -106,7 +106,7 @@ public class CellImpl implements Cell {
         influencingOnValues.add(value);
     }
 
-    public Expression<?> getContent() {
+    public EffectiveValue getContent() {
         if (effectiveValue != null) {
             return effectiveValue;
         }
@@ -115,16 +115,13 @@ public class CellImpl implements Cell {
 
     @Override
     public boolean calculateEffectiveValue() {
-        // build the expression object out of the original value...
-        // it can be {PLUS, 4, 5} OR {CONCAT, "hello", "world"}
-        Expression<?> expression = ExpressionFactory.createExpression(originalValue);
-        Expression<?> newExpression = ExpressionFactory.createExpression(expression.evaluate().toString());
+        Expression expression = ExpressionFactory.createExpression(originalValue);
+        EffectiveValue newEffectiveValue = expression.evaluate(sheet);
 
-        if(newExpression.equals(expression)){
+        if (newEffectiveValue.equals(effectiveValue)) {
             return false;
-        }
-        else {
-            this.effectiveValue = newExpression;
+        } else {
+            this.effectiveValue = newEffectiveValue;
             return true;
         }
     }

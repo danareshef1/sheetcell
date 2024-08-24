@@ -269,66 +269,124 @@
 //        return (Expression<String>) args[0];
 //    }
 //}
-package expression.systemicExpression;
-
-import expression.Expression;
-import expression.UnaryExpression;
-import parser.ExpressionParser;
-import sheet.Sheet;
-import sheet.SheetReadActions;
-import sheet.coordinate.Coordinate;
-import sheet.coordinate.CoordinateFactory;
-
-public class REF extends UnaryExpression<Object> implements SystemicExpression, ExpressionParser<Expression<Object>> {
-
-    private final Coordinate coordinate;
-
-    public REF(Coordinate coordinate) {
-        super(null);
-        this.coordinate = coordinate;
-    }
-
-    @Override
-    public Object evaluate(Object expression, SheetReadActions sheet) {
-        String celId = CoordinateFactory.createCoordinate(coordinate.getRow(), coordinate.getColumn()).toString();
-        CoordinateFactory.coordinateValidator(celId, sheet.getSheetSize());
-        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getOriginalValue() == null)
-        {
-            throw new IllegalArgumentException("Cell " + celId + " is empty. Cant be referenced to an empty cell.");
-        }
-        return sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
-    }
-
-//    @Override
-//    public Expression<Object> evaluate(Sheet sheet) {
-//        // error handling if the cell is empty or not found
-//        return (Expression<Object>) sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
+//package expression.systemicExpression;
+//
+//import expression.Expression;
+//import expression.UnaryExpression;
+//import parser.ExpressionParser;
+//import sheet.Sheet;
+//import sheet.SheetReadActions;
+//import sheet.coordinate.Coordinate;
+//import sheet.coordinate.CoordinateFactory;
+//
+//public class REF extends UnaryExpression<Object> implements SystemicExpression, ExpressionParser<Expression<Object>> {
+//
+//    private final Coordinate coordinate;
+//
+//    public REF(Coordinate coordinate) {
+//        super(null);
+//        this.coordinate = coordinate;
 //    }
-
+//
 //    @Override
-//    public Expression<String> parse(Expression<?>... args) {
+//    public Object evaluate(Object expression, SheetReadActions sheet) {
+//        String celId = CoordinateFactory.createCoordinate(coordinate.getRow(), coordinate.getColumn()).toString();
+//        CoordinateFactory.coordinateValidator(celId, sheet.getSheetSize());
+//        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getOriginalValue() == null)
+//        {
+//            throw new IllegalArgumentException("Cell " + celId + " is empty. Cant be referenced to an empty cell.");
+//        }
+//        return sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
+//    }
+//
+////    @Override
+////    public Expression<Object> evaluate(Sheet sheet) {
+////        // error handling if the cell is empty or not found
+////        return (Expression<Object>) sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
+////    }
+//
+////    @Override
+////    public Expression<String> parse(Expression<?>... args) {
+////        if (args.length != 1) {
+////            throw new IllegalArgumentException("REF function requires exactly 1 argument, but got " + args.length);
+////        }
+////
+////        // Check if the argument is a valid cell ID (string expression)
+////        if (!SystemicExpression.isSystemicExpression(args[0])) {
+////            throw new IllegalArgumentException("Invalid argument type for REF function. Expected String (cell ID), but got " +
+////                    args[0].getClass().getSimpleName());
+////        }
+////
+////        return (Expression<String>) args[0];
+////    }
+//
+//    @Override
+//    public Expression<Object> parse(Expression<?>... args) {
+//        // validations of the function. it should have exactly one argument
 //        if (args.length != 1) {
 //            throw new IllegalArgumentException("REF function requires exactly 1 argument, but got " + args.length);
 //        }
 //
-//        // Check if the argument is a valid cell ID (string expression)
-//        if (!SystemicExpression.isSystemicExpression(args[0])) {
-//            throw new IllegalArgumentException("Invalid argument type for REF function. Expected String (cell ID), but got " +
-//                    args[0].getClass().getSimpleName());
+//        // verify indeed argument represents a reference to a cell and create a Coordinate instance. if not ok returns a null. need to verify it
+//        Coordinate target = CoordinateFactory.cellIdToRowCol(args[0].toString().trim());
+//        if (target == null) {
+//            throw new IllegalArgumentException("Invalid argument for REF function. Expected a valid cell reference, but got " + args[0]);
 //        }
 //
-//        return (Expression<String>) args[0];
+//        return new REF(target);
 //    }
+//}
+
+
+
+package expression.systemicExpression;
+
+import expression.Expression;
+import expression.functionsValidators.FunctionValidator;
+import parser.ExpressionParser;
+import sheet.coordinate.CoordinateFactory;
+import sheet.SheetReadActions;
+import sheet.cell.CellType;
+import sheet.cell.EffectiveValue;
+import sheet.coordinate.Coordinate;
+
+public class REF extends FunctionValidator implements SystemicExpression, ExpressionParser<Expression> {
+    private final Coordinate coordinate;
+
+    public REF(Coordinate coordinate) {
+        this.coordinate = coordinate;
+    }
 
     @Override
-    public Expression<Object> parse(Expression<?>... args) {
+    public EffectiveValue evaluate(SheetReadActions sheet) {
+        // error handling if the cell is empty or not found
+        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()) == null){
+            throw new IllegalArgumentException("Cell " + coordinate.getRow() + "," + coordinate.getColumn() + " is out" +
+                    "of the sheet boundaries");
+        }
+
+        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getOriginalValue() == null){
+            throw new IllegalArgumentException("Cell " + coordinate.getRow() + "," + coordinate.getColumn() + " is empty," +
+                    "you cant reference to an empty cell");
+        }
+
+        return sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
+    }
+
+    @Override
+    public CellType getFunctionResultType() {
+        return CellType.UNKNOWN;
+    }
+
+    @Override
+    public Expression parse(Expression... args) {
         // validations of the function. it should have exactly one argument
         if (args.length != 1) {
-            throw new IllegalArgumentException("REF function requires exactly 1 argument, but got " + args.length);
+            throw new IllegalArgumentException("Invalid number of arguments for REF function. Expected 1, but got " + args.length);
         }
 
         // verify indeed argument represents a reference to a cell and create a Coordinate instance. if not ok returns a null. need to verify it
-        Coordinate target = CoordinateFactory.cellIdToRowCol(args[0].toString().trim());
+        Coordinate target = CoordinateFactory.cellIdToRowCol(args[0].toString());
         if (target == null) {
             throw new IllegalArgumentException("Invalid argument for REF function. Expected a valid cell reference, but got " + args[0]);
         }
@@ -336,5 +394,3 @@ public class REF extends UnaryExpression<Object> implements SystemicExpression, 
         return new REF(target);
     }
 }
-
-

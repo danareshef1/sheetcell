@@ -23,6 +23,7 @@ public class BuildMenu {
         MenuItem fiveSelection = mainMenu.addSubMenuItem("Present versions of the sheet");
 
         //     /Users/danareshef/IdeaProjects/testXmlForSeetcell1/basic2.xml
+        //     /Users/danareshef/IdeaProjects/testXmlForSeetcell1/insurance.xml
 
         LoadFile loadFile = new LoadFile(oneSelection);
         SheetPresentation presentSheet = new SheetPresentation(twoSelection);

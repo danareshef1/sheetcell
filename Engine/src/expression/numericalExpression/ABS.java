@@ -1,39 +1,51 @@
 package expression.numericalExpression;
 
 import expression.Expression;
-import expression.Number;
-import expression.UnaryExpression;
+import expression.functionsValidators.FunctionValidator;
 import parser.ExpressionParser;
-import sheet.Sheet;
 import sheet.SheetReadActions;
+import sheet.cell.CellType;
+import sheet.cell.EffectiveValue;
+import sheet.cell.EffectiveValueImpl;
 
-import java.util.List;
 
-public class ABS extends UnaryExpression<Double> implements NumericalExpression, ExpressionParser<Expression<Double>> {
+public class ABS extends FunctionValidator implements NumericalExpression, ExpressionParser<Expression> {
+    private final Expression expression;
 
-    public ABS(Expression<Double> expression1) {
-        super(expression1);
+    public ABS(Expression expression) {
+        this.expression = expression;
         this.functionName = "ABS";
     }
 
     @Override
-    protected Double evaluate(Double e1, SheetReadActions sheet) {
-        return Math.abs(e1);
+    public EffectiveValue evaluate(SheetReadActions sheet) {
+        EffectiveValue expression1 = expression.evaluate(sheet);
+
+        double result = Math.abs(expression1.extractValueWithExpectation(Double.class));
+
+        return new EffectiveValueImpl(CellType.NUMERIC, result);
     }
 
     @Override
-    public Expression<Double> parse(Expression<?>... args) {
+    public CellType getFunctionResultType() {
+        return CellType.NUMERIC;
+    }
+
+    @Override
+    public Expression parse(Expression... args) {
         if (args.length != 1) {
-            throw new IllegalArgumentException("ABS function requires exactly 1 argument, but got " + args.length);
+            throw new IllegalArgumentException("ABS function requires exactly 2 arguments, but got " + args.length);
         }
 
         // Check if both arguments are numerical expressions
-        if (!NumericalExpression.isNumericalExpression(args[0])) {
-            throw new IllegalArgumentException("Invalid argument types for ABS function. Expected numerical expressions, but got "
-                    + args[0].getClass().getSimpleName());
+        if (!args[0].getFunctionResultType().equals(CellType.NUMERIC) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN)) {
+            throw new IllegalArgumentException("Invalid argument types for ABS function. Expected NUMERIC, but got " + args[0].getFunctionResultType());
         }
 
-        return new ABS((Expression<Double>) args[0]);
+        return new ABS(args[0]);
     }
 
+    public String toString(SheetReadActions sheet) {
+        return "{" + functionName + "," + expression.evaluate(sheet) + "}";
+    }
 }

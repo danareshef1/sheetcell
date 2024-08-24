@@ -1,39 +1,55 @@
 package expression.stringExpression;
 
-import expression.BinaryExpression;
 import expression.Expression;
-import expression.numericalExpression.NumericalExpression;
+import expression.functionsValidators.FunctionValidator;
 import parser.ExpressionParser;
-import sheet.Sheet;
 import sheet.SheetReadActions;
+import sheet.cell.CellType;
+import sheet.cell.EffectiveValue;
+import sheet.cell.EffectiveValueImpl;
 
-import java.util.List;
+public class CONCAT extends FunctionValidator implements StringExpression, ExpressionParser<Expression> {
+    private final Expression expression1;
+    private final Expression expression2;
 
-public class CONCAT extends BinaryExpression<String> implements StringExpression, ExpressionParser<Expression<String>> {
-
-    public CONCAT(Expression<String> expression1, Expression<String> expression2) {
-
-        super(expression1, expression2);
+    public CONCAT(Expression expression1, Expression expression2) {
+        this.expression1 = expression1;
+        this.expression2 = expression2;
         this.functionName = "CONCAT";
     }
 
     @Override
-    protected String evaluate(String e1, String e2, SheetReadActions sheet) {
-        return e1 + e2;
+    public EffectiveValue evaluate(SheetReadActions sheet) {
+        EffectiveValue leftValue = expression1.evaluate(sheet);
+        EffectiveValue rightValue = expression2.evaluate(sheet);
+
+        String result = leftValue.extractValueWithExpectation(String.class) + rightValue.extractValueWithExpectation(String.class);
+
+        return new EffectiveValueImpl(CellType.STRING, result);
     }
 
     @Override
-    public CONCAT parse(Expression<?>... args) {
+    public CellType getFunctionResultType() {
+        return CellType.STRING;
+    }
+
+    @Override
+    public CONCAT parse(Expression... args) {
         if (args.length != 2) {
             throw new IllegalArgumentException("CONCAT function requires exactly 2 arguments, but got " + args.length);
         }
 
-// Check if both arguments are numerical expressions
-        if (!StringExpression.isStringExpression(args[0]) || !StringExpression.isStringExpression(args[1])) {
-            throw new IllegalArgumentException("Invalid argument types for CONCAT function. Expected string expressions, but got "
-                    + args[0].getClass().getSimpleName() + " and " + args[1].getClass().getSimpleName());
+        // Check if both arguments are numerical expressions
+        if ((!args[0].getFunctionResultType().equals(CellType.STRING) || !args[1].getFunctionResultType().equals(CellType.STRING))
+            && (!args[0].getFunctionResultType().equals(CellType.UNKNOWN) || !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
+            throw new IllegalArgumentException("Invalid argument types for CONCAT function. Expected STRING, but got " + args[0].getFunctionResultType()
+                    + " and " + args[1].getFunctionResultType());
         }
 
-        return new CONCAT((Expression<String>) args[0], (Expression<String>) args[1]);
+        return new CONCAT(args[0], args[1]);
+    }
+
+    public String toString(SheetReadActions sheet) {
+        return "{" + functionName + "," + expression1.evaluate(sheet) + "," + expression2.evaluate(sheet) + "}";
     }
 }
