@@ -30,7 +30,7 @@ public class SheetFactory {
         for (int i=0; i<stlSheet.getSTLCells().getSTLCell().size(); i++){
             int[] cellId = cellIdToRowCol(stlSheet.getSTLCells().getSTLCell().get(i).getRow(),
                     stlSheet.getSTLCells().getSTLCell().get(i).getColumn());
-            currentSheet = currentSheet.updateCellValueAndCalculate(cellId[0], cellId[1],
+            currentSheet.setCell(cellId[0], cellId[1],
                     stlSheet.getSTLCells().getSTLCell().get(i).getSTLOriginalValue());
         }
     }

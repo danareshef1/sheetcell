@@ -79,19 +79,20 @@ public class SheetImpl implements Sheet {
         }
     }
 
-//    @Override
-//    public void setCell(int row, int column, String value) {
-//        sheetBoundsCheck(row, column);
-//
-//        Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-//        Cell cell = activeCells.get(coordinate);
-//        if (cell == null) {
-//            cell = new CellImpl(row, column, value);
-//            activeCells.put(coordinate, cell);
-//        }
-//        cell.setCellOriginalValue(value);
-//        cell.updateVersion();
-//    }
+    @Override
+    public void setCell(int row, int column, String value) {
+        sheetBoundsCheck(row, column);
+
+        Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
+        SheetImpl newSheetVersion = copySheet();
+        Cell cell = activeCells.get(coordinate);
+        if (cell == null) {
+            cell = new CellImpl(row, column, value, 0, newSheetVersion);
+            activeCells.put(coordinate, cell);
+        }
+        cell.setCellOriginalValue(value);
+        cell.updateVersion();
+    }
 
     @Override
     public void addCell(Coordinate coordinate, Cell cell) {
@@ -103,25 +104,31 @@ public class SheetImpl implements Sheet {
 
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
 
+        Cell newCell;
         SheetImpl newSheetVersion = copySheet();
-        int newVersionValue = newSheetVersion.getVersion()+1;
-        Cell newCell = new CellImpl(row, column, value, newVersionValue, newSheetVersion);
+        if (newSheetVersion.activeCells.get(coordinate) != null) {
+            int newVersionValue = newSheetVersion.activeCells.get(coordinate).getVersion() + 1;
+            newCell = new CellImpl(row, column, value, newVersionValue, newSheetVersion);
+        }
+        else {
+            newCell = new CellImpl(row, column, value, 0, newSheetVersion);
+        }
         newSheetVersion.addCell(coordinate, newCell);
-        if (value.isEmpty()){
+        if (value.isEmpty()) {
             newSheetVersion.activeCells.remove(coordinate);
         }
         try {
             List<Cell> cellsThatHaveChanged = newSheetVersion
-                            .orderCellsForCalculation()
-                            .stream()
-                            .filter(Cell::calculateEffectiveValue)
-                            .collect(Collectors.toList());
+                    .orderCellsForCalculation()
+                    .stream()
+                    .filter(Cell::calculateEffectiveValue)
+                    .collect(Collectors.toList());
 
             // successful calculation. update sheet and relevant cells version
             ///int newVersion = newSheetVersion.increaseVersion();
             //cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
-            //cellsThatHaveChanged.forEach(Cell::updateVersion);
-            newCell.updateVersion();
+            cellsThatHaveChanged.forEach(Cell::updateVersion);
+            //newCell.updateVersion();
             newSheetVersion.incrementVersion();
 
             return newSheetVersion;
