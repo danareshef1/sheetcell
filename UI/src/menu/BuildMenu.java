@@ -2,7 +2,7 @@ package menu;
 
 import fromEngine.SheetDTO;
 import jakarta.xml.bind.JAXBException;
-//import menu.menuItems.selectionFive.VersionManager;
+import menu.menuItems.selectionFive.VersionManager;
 import menu.menuItems.selectionFour.CellUpdater;
 import menu.menuItems.selectionOne.LoadFile;
 import menu.menuItems.selectionThree.CellPresentation;
@@ -29,7 +29,7 @@ public class BuildMenu {
         SheetPresentation presentSheet = new SheetPresentation(twoSelection);
         CellPresentation presentCell = new CellPresentation(threeSelection);
         CellUpdater sheetUpdater = new CellUpdater(fourSelection);
-////        VersionManager versionManager = new VersionManager(fiveSelection);
+        VersionManager versionManager = new VersionManager(fiveSelection);
 
         return mainMenu;
     }

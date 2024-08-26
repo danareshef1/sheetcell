@@ -16,14 +16,19 @@ public class SheetDTO {
     private String name;
     private Map<Coordinate, CellDTO> activeCells;
     private LayoutImpl size;
+    private int counterChangedCells;
 
     public SheetDTO(Sheet sheet) {
         this.name = sheet.getName();
         this.version = sheet.getVersion();
         this.size = sheet.getSheetSize();
         this.activeCells = convertCellsToDTO(sheet);
+        this.counterChangedCells = sheet.getCountChangedCells();
     }
 
+    public int getCounterChangedCells(){
+        return counterChangedCells;
+    }
     public int getVersion() {
         return version;
     }

@@ -13,13 +13,13 @@ public interface Cell extends Serializable {
 //    void setCellEffectiveValue(Expression<?> value);
     EffectiveValue getEffectiveValue();
     void addInfluencingOnValues(Coordinate cell);
-
+    void setVersion(int version);
     boolean calculateEffectiveValue();
     int getVersion();
     List<Cell> getDependsOnValues();
     void addDependsOnValue(Coordinate cell);
     List<Cell> getInfluencingOnValues();
-    List<Cell> getPastValues();
     void updateVersion();
     String getCellId();
+    void removeDependencies();
 }

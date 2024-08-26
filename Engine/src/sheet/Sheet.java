@@ -8,4 +8,5 @@ import java.io.Serializable;
 import java.util.Map;
 
 public interface Sheet extends SheetReadActions, SheetUpdateActions, Serializable {
+    int getCountChangedCells();
 }

@@ -25,7 +25,7 @@ public class SheetFactory {
         cellSize = new CellSizeImpl(stlSheet.getSTLLayout().getSTLSize().getColumnWidthUnits(),
                 stlSheet.getSTLLayout().getSTLSize().getRowsHeightUnits());
         layout = new LayoutImpl(stlSheet.getSTLLayout().getRows(), stlSheet.getSTLLayout().getColumns(), cellSize);
-        currentSheet = new SheetImpl(stlSheet.getName(), layout);
+        currentSheet = new SheetImpl(stlSheet.getName(), layout, stlSheet.getSTLCells().getSTLCell().size());
 
         for (int i=0; i<stlSheet.getSTLCells().getSTLCell().size(); i++){
             int[] cellId = cellIdToRowCol(stlSheet.getSTLCells().getSTLCell().get(i).getRow(),

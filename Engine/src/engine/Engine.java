@@ -17,5 +17,6 @@ public interface Engine {
     CellDTO displayCellValue(DisplayCellDTO displayCellDTO);
     SheetDTO displaySheet();
     void ensureSheetLoaded();
-    void displaySheetVersions();
+    List<SheetDTO> displaySheetVersions();
+    SheetDTO getSheetByVersion(int version);
 }

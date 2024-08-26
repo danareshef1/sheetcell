@@ -16,12 +16,19 @@ public class SheetImpl implements Sheet {
     private final String name;
     private Map<Coordinate,Cell> activeCells;
     private final LayoutImpl size;
+    private int countChangedCells;
 
-    public SheetImpl(String name, LayoutImpl size) {
+    public SheetImpl(String name, LayoutImpl size, int countChangedCells) {
         this.version = new VersionImpl();
         this.name = name;
         this.size = size;
         this.activeCells = new HashMap<>();
+        this.countChangedCells = countChangedCells;
+    }
+
+    @Override
+    public int getCountChangedCells(){
+        return countChangedCells;
     }
 
     @Override
@@ -100,41 +107,195 @@ public class SheetImpl implements Sheet {
         activeCells.put(coordinate, cell);
     }
 
-    @Override
-    public Sheet updateCellValueAndCalculate(int row, int column, String value) {
+//    @Override
+//    public Sheet updateCellValueAndCalculate(int row, int column, String value) {
+//
+//        Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
+//
+//        Cell newCell;
+//        SheetImpl newSheetVersion = copySheet();
+//        if (newSheetVersion.activeCells.get(coordinate) != null) {
+//            int newVersionValue = newSheetVersion.activeCells.get(coordinate).getVersion() + 1;
+//            newCell = new CellImpl(row, column, value, newVersionValue, newSheetVersion);
+//            newCell.removeDependencies();
+//        }
+//        else {
+//            newCell = new CellImpl(row, column, value, 1, newSheetVersion);
+//        }
+//        newSheetVersion.addCell(coordinate, newCell);
+//        newSheetVersion.handleEmptyCell(coordinate, value);
+//        try {
+//            List<Cell> cellsThatHaveChanged = newSheetVersion
+//                    .orderCellsForCalculation()
+//                    .stream()
+//                    .filter(Cell::calculateEffectiveValue)
+//                    .collect(Collectors.toList());
+//
+//            cellsThatHaveChanged.forEach(Cell::updateVersion);
+//            newSheetVersion.incrementVersion();
+//
+//            return newSheetVersion;
+//        } catch (Exception e) {
+//            throw new RuntimeException("Cant update Cell Value. This cell effects on those other cells: "
+//                    + newCell.getInfluencingOnValues()/*.forEach(Cell::getCellId)*/ + ". Please check first in those cells why you can't make this change " +
+//                    "(maybe there is a function inside one cell witch can not work with this new value).");
+//        }
+//    }
+//
+//    private List<Cell> orderCellsForCalculation() {
+//        // Build dependency graph
+//        Map<Cell, List<Cell>> graph = new HashMap<>();
+//        Map<Cell, Integer> inDegree = new HashMap<>();
+//        List<Cell> result = new ArrayList<>();
+//
+//        // Initialize graph and in-degree map
+//        for (Cell cell : activeCells.values()) {
+//            graph.put(cell, new ArrayList<>());
+//            inDegree.put(cell, 0);
+//        }
+//
+//        // Build graph
+//        for (Cell cell : activeCells.values()) {
+//            for (Cell dependency : cell.getDependsOnValues()) {
+//                List<Cell> val = graph.get(dependency);
+//                if (val != null) {
+//                    val.add(cell);
+//                    inDegree.put(cell, inDegree.get(cell) + 1);
+//                }
+//            }
+//        }
+//
+//        // Perform topological sort using Kahn's algorithm
+//        Queue<Cell> queue = new LinkedList<>();
+//        for (Map.Entry<Cell, Integer> entry : inDegree.entrySet()) {
+//            if (entry.getValue() == 0) {
+//                queue.add(entry.getKey());
+//            }
+//        }
+//
+//        while (!queue.isEmpty()) {
+//            Cell cell = queue.poll();
+//            result.add(cell);
+//            for (Cell neighbor : graph.get(cell)) {
+//                inDegree.put(neighbor, inDegree.get(neighbor) - 1);
+//                if (inDegree.get(neighbor) == 0) {
+//                    queue.add(neighbor);
+//                }
+//            }
+//        }
+//
+//        // Check for circular dependencies
+//        if (result.size() != activeCells.size()) {
+//            throw new RuntimeException("Circular dependency detected.");
+//        }
+//
+//        return result;
+//    }
+//
+//    private void handleEmptyCell(Coordinate coordinate, String value) {
+//        if(value.isEmpty()){
+//            removeCoordinate(coordinate);
+//        }
+//    }
+//
+//    private List<Cell> recalculateAndGetChangedCells(){
+//        List<Cell> cellsThatHaveChanged = new ArrayList<>();
+//
+//        for (Cell cell : orderCellsForCalculation()) {
+//            setCurrentCalculatingCell(cell);
+//
+//            if (cell.calculateEffectiveValue()) {
+//                cellsThatHaveChanged.add(cell);
+//            }
+//        }
+//
+//        return cellsThatHaveChanged;
+//    }
+//
+//    private void setCurrentCalculatingCell(Cell cell) {
+//    }
+//
+//    private void removeCoordinate(Coordinate coordinate) {
+//        Cell cell = activeCells.get(coordinate);
+//
+//        if(cell != null){
+//            cell.removeDependencies();
+//        }
+//
+//        activeCells.remove(coordinate);
+//    }
+//
+////    private void updateVersionManager(int cellsThatHaveChanged) {
+////        versionManager.setNumberOfChangedCellsInVersion(version, cellsThatHaveChanged);
+////        versionManager.setVersion(version,this);
+////    }
 
+    public SheetImpl updateCellValueAndCalculate(int row, int column, String value) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-
-        Cell newCell;
         SheetImpl newSheetVersion = copySheet();
-        if (newSheetVersion.activeCells.get(coordinate) != null) {
-            int newVersionValue = newSheetVersion.activeCells.get(coordinate).getVersion() + 1;
-            newCell = new CellImpl(row, column, value, newVersionValue, newSheetVersion);
-        }
-        else {
-            newCell = new CellImpl(row, column, value, 1, newSheetVersion);
-        }
-        newSheetVersion.addCell(coordinate, newCell);
-        if (value.isEmpty()) {
-            newSheetVersion.activeCells.remove(coordinate);
-        }
-        try {
-            List<Cell> cellsThatHaveChanged = newSheetVersion
-                    .orderCellsForCalculation()
-                    .stream()
-                    .filter(Cell::calculateEffectiveValue)
-                    .collect(Collectors.toList());
 
-            cellsThatHaveChanged.forEach(Cell::updateVersion);
+        boolean cellUpdated = newSheetVersion.updateOrCreateCell(coordinate, row, column, value, newSheetVersion);
+        int numOfCellsThatHaveChanged = cellUpdated ? 1 : 0;
+
+        newSheetVersion.handleEmptyCell(coordinate, value);
+
+        try {
+            List<Cell> cellsThatHaveChanged = newSheetVersion.orderCellsForCalculation()
+                    .stream().filter(Cell::calculateEffectiveValue).collect(Collectors.toList());
             newSheetVersion.incrementVersion();
+            cellsThatHaveChanged.forEach(Cell::updateVersion);
+            numOfCellsThatHaveChanged += cellsThatHaveChanged.size();  ////
+            newSheetVersion.countChangedCells = numOfCellsThatHaveChanged;
 
             return newSheetVersion;
+
         } catch (Exception e) {
-            throw new RuntimeException("Cant update Cell Value. This cell effects on those other cells: "
-                    + newCell.getInfluencingOnValues()/*.forEach(Cell::getCellId)*/ + ". Please check first in those cells why you can't make this change " +
-                    "(maybe there is a function inside one cell witch can not work with this new value).");
+            throw new RuntimeException(e.getMessage());
         }
     }
+
+
+    private void handleEmptyCell(Coordinate coordinate, String value) {
+        if(value.isEmpty()){
+            removeCoordinate(coordinate);
+        }
+    }
+
+    private boolean updateOrCreateCell(Coordinate coordinate, int row, int column, String value, SheetImpl newSheetVersion) {
+        Cell cell = activeCells.get(coordinate);
+
+        if (cell != null) {
+//            if (Objects.equals("REF", FunctionValidator.getFunctionName(cell.getOriginalValue()).toUpperCase())){
+//                Coordinate refCellCoordinate = CoordinateFactory.cellIdToRowCol(FunctionValidator.getCellIdForRef(cell.getOriginalValue()));
+//                Cell refCell = getCell(refCellCoordinate.getRow(), refCellCoordinate.getRow());
+//            }
+            int newVersionNumber = newSheetVersion.activeCells.get(coordinate).getVersion() + 1;
+            cell.removeDependencies();
+            cell.setCellOriginalValue(value);
+            cell.setVersion(newVersionNumber);
+            return cell.calculateEffectiveValue();
+        } else {
+            cell = new CellImpl(row, column, value, 0, this);
+            activeCells.put(coordinate, cell);
+            return true;
+        }
+    }
+
+//    private void updateVersionManager(int cellsThatHaveChanged) {
+//        setNumberOfChangedCellsInVersion(version, cellsThatHaveChanged);
+//        setVersion(version,this);
+//    }
+
+    private void removeCoordinate(Coordinate coordinate) {
+        Cell cell = activeCells.get(coordinate);
+
+        if(cell != null){
+            cell.removeDependencies();
+        }
+
+        activeCells.remove(coordinate);
+    }
+
 
     private List<Cell> orderCellsForCalculation() {
         // Build dependency graph
@@ -185,6 +346,25 @@ public class SheetImpl implements Sheet {
 
         return result;
     }
+
+
+
+//    private List<Cell> recalculateAndGetChangedCells(){
+//        List<Cell> cellsThatHaveChanged = new ArrayList<>();
+//
+//        for (Cell cell : orderCellsForCalculation()) {
+//            setCurrentCalculatingCell(cell);
+//
+//            if (cell.calculateEffectiveValue()) {
+//                cellsThatHaveChanged.add(cell);
+//            }
+//        }
+//
+//        return cellsThatHaveChanged;
+//    }
+//
+//    private void setCurrentCalculatingCell(Cell cell) {
+//    }
 
     @Override
     public SheetImpl copySheet() {

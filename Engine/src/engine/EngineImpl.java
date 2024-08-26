@@ -5,26 +5,26 @@ import fromEngine.CellDTO;
 import fromEngine.SheetDTO;
 import jakarta.xml.bind.JAXBException;
 import sheet.Sheet;
+import sheet.SheetImpl;
 import sheet.cell.Cell;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 import fromUI.CellUpdateDTO;
 import fromUI.DisplayCellDTO;
 import fromUI.LoadSheetDTO;
-import sheet.version.Version;
-import sheet.version.VersionImpl;
+import sheet.layout.LayoutImpl;
 //import sheet.version.VersionManager;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.util.*;
 
 public class EngineImpl implements Engine {
     private static EngineImpl instance;
     private Sheet sheet;
 //    private final Map<Integer, Version> versions = new HashMap<>(); // Store versions and their data
     ///private VersionManager versionManager;
+    private final List<Sheet> mainSheet = new ArrayList<>();
 
     public static synchronized EngineImpl getInstance() {
         if (instance == null) {
@@ -36,6 +36,7 @@ public class EngineImpl implements Engine {
     @Override
     public void loadSheetFromFile(LoadSheetDTO loadSheetDTO) throws JAXBException, IOException {
         sheet = SheetFactory.loadFile(LoadSheetDTO.getFilePath());
+        addSheet(sheet);
         //versionManager.saveVersion(sheet);
     }
 
@@ -43,6 +44,7 @@ public class EngineImpl implements Engine {
     public void updateCellValue(CellUpdateDTO cellUpdateDTO) {
         Coordinate coordinateToUpdate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId().toUpperCase());
         this.sheet = sheet.updateCellValueAndCalculate(coordinateToUpdate.getRow(), coordinateToUpdate.getColumn(), cellUpdateDTO.getNewValue());
+        addSheet(sheet);
         //versionManager.saveVersion(sheet);
     }
 
@@ -68,7 +70,54 @@ public class EngineImpl implements Engine {
     }
 
     @Override
-    public void displaySheetVersions() {
+    public List<SheetDTO> displaySheetVersions() {
+        List<SheetDTO> sheetDTOs = new ArrayList<>();
+        for (Sheet sheet : mainSheet) {
+            sheetDTOs.add(SheetDTO.createSheetDTO(sheet));
+        }
+        return sheetDTOs;
+    }
 
+    @Override
+    public SheetDTO getSheetByVersion(int version) {
+        Optional<Sheet> sheet = mainSheet.stream().filter(s -> s.getVersion() == version).findFirst();
+        if (sheet.isEmpty()){
+            throw new IllegalArgumentException("There is no sheet with version " + version);
+        }
+        return SheetDTO.createSheetDTO(sheet.get());
+    }
+
+    public void setCellValue(String cellId, String value) throws ParseException {
+        Coordinate coordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
+        if (mainSheet.isEmpty()) {
+            throw new IllegalStateException("There is no sheet available to update");
+        }
+        Sheet currentSheet = mainSheet.getLast();
+        Sheet newSheet = createSheetFrom(currentSheet);
+        newSheet.incrementVersion();
+
+        newSheet.updateCellValueAndCalculate(coordinate.getRow(), coordinate.getColumn(), value);
+        newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).setVersion(newSheet.getVersion());
+        for (Cell coor : newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).getDependsOnValues()){
+            Coordinate newCoor = CoordinateFactory.cellIdToRowCol(coor.getCellId().toUpperCase());
+            newSheet.getCell(newCoor.getRow(), newCoor.getColumn()).setVersion(newSheet.getVersion());
+        }
+        mainSheet.add(newSheet);
+    }
+
+    public Sheet createSheetFrom(Sheet sheet){
+        String newSheetName = sheet.getName();
+        LayoutImpl newSheetLayout = sheet.getSheetSize();
+        int cellsWhoChanged = sheet.getCountChangedCells();
+        return new SheetImpl(newSheetName, newSheetLayout, cellsWhoChanged);
+    }
+
+    public void addSheet(Sheet newSheet) {
+        if (newSheet != null){
+            mainSheet.add(newSheet);
+        }
+        else {
+            throw new IllegalArgumentException("The new sheet cant be null.");
+        }
     }
 }

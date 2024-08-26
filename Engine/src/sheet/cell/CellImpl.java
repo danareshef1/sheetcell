@@ -6,6 +6,7 @@ import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateImpl;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +15,6 @@ public class CellImpl implements Cell {
     private EffectiveValue effectiveValue = null;
     private String originalValue;
     private int version;
-    private List<Cell> pastValues;
     private List<Cell> dependsOnValues;
     private List<Cell> influencingOnValues;
     private String cellId;
@@ -41,6 +41,16 @@ public class CellImpl implements Cell {
     @Override
     public String getCellId() {
         return cellId;
+    }
+
+    @Override
+    public void removeDependencies() {
+        for (Cell cell : dependsOnValues) {
+            cell.getInfluencingOnValues().remove(this);
+        }
+        for (Cell cell : influencingOnValues) {
+            cell.getDependsOnValues().remove(this);
+        }
     }
 
     @Override
@@ -80,15 +90,6 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public List<Cell> getPastValues() {
-        return pastValues;
-    }
-
-    public void addPastValue(Cell value) {
-        pastValues.add(value);
-    }
-
-    @Override
     public List<Cell> getDependsOnValues() {
         return dependsOnValues;
     }
@@ -115,6 +116,11 @@ public class CellImpl implements Cell {
             return effectiveValue;
         }
         return null;
+    }
+
+    @Override
+    public void setVersion(int version) {
+        this.version = version;
     }
 
     @Override

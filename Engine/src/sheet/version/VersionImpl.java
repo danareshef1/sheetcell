@@ -26,5 +26,9 @@ public class VersionImpl implements Version {
     public void incrementCellChanged() {
         cellsChanged++;
     }
+
+    public void setVersionNumber(int versionNumber){
+        this.versionNumber = versionNumber;
+    }
 }
 
