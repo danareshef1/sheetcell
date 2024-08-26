@@ -37,6 +37,7 @@ public class SheetImpl implements Sheet {
     @Override
     public void incrementVersion() {
         version.incrementVersion();
+        //saveVersion();
     }
 
     public int getCellChangedNumber() {
@@ -111,7 +112,7 @@ public class SheetImpl implements Sheet {
             newCell = new CellImpl(row, column, value, newVersionValue, newSheetVersion);
         }
         else {
-            newCell = new CellImpl(row, column, value, 0, newSheetVersion);
+            newCell = new CellImpl(row, column, value, 1, newSheetVersion);
         }
         newSheetVersion.addCell(coordinate, newCell);
         if (value.isEmpty()) {
@@ -124,16 +125,14 @@ public class SheetImpl implements Sheet {
                     .filter(Cell::calculateEffectiveValue)
                     .collect(Collectors.toList());
 
-            // successful calculation. update sheet and relevant cells version
-            ///int newVersion = newSheetVersion.increaseVersion();
-            //cellsThatHaveChanged.forEach(cell -> cell.updateVersion(newVersion));
             cellsThatHaveChanged.forEach(Cell::updateVersion);
-            //newCell.updateVersion();
             newSheetVersion.incrementVersion();
 
             return newSheetVersion;
         } catch (Exception e) {
-            throw new RuntimeException("Error updating cell value");
+            throw new RuntimeException("Cant update Cell Value. This cell effects on those other cells: "
+                    + newCell.getInfluencingOnValues()/*.forEach(Cell::getCellId)*/ + ". Please check first in those cells why you can't make this change " +
+                    "(maybe there is a function inside one cell witch can not work with this new value).");
         }
     }
 
@@ -152,8 +151,11 @@ public class SheetImpl implements Sheet {
         // Build graph
         for (Cell cell : activeCells.values()) {
             for (Cell dependency : cell.getDependsOnValues()) {
-                graph.get(dependency).add(cell);
-                inDegree.put(cell, inDegree.get(cell) + 1);
+                List<Cell> val = graph.get(dependency);
+                if (val != null) {
+                    val.add(cell);
+                    inDegree.put(cell, inDegree.get(cell) + 1);
+                }
             }
         }
 
@@ -184,8 +186,8 @@ public class SheetImpl implements Sheet {
         return result;
     }
 
-
-    private SheetImpl copySheet() {
+    @Override
+    public SheetImpl copySheet() {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(baos);

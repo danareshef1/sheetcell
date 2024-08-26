@@ -24,9 +24,16 @@ public class DIVIDE extends FunctionValidator implements NumericalExpression, Ex
         EffectiveValue leftValue = expression1.evaluate(sheet);
         EffectiveValue rightValue = expression2.evaluate(sheet);
 
-        double result = leftValue.extractValueWithExpectation(Double.class) / rightValue.extractValueWithExpectation(Double.class);
-
-        return new EffectiveValueImpl(CellType.NUMERIC, result);
+        try {
+            if (rightValue.extractValueWithExpectation(Double.class) == 0)
+                return new EffectiveValueImpl(CellType.NUMERIC, "NaN");
+            else {
+                double result = leftValue.extractValueWithExpectation(Double.class) / rightValue.extractValueWithExpectation(Double.class);
+                return new EffectiveValueImpl(CellType.NUMERIC, result);
+            }
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The function DIVIDE expecting for 2 numbers.");
+        }
     }
 
     @Override
@@ -41,8 +48,8 @@ public class DIVIDE extends FunctionValidator implements NumericalExpression, Ex
         }
 
         // Check if both arguments are numerical expressions
-        if ((!args[0].getFunctionResultType().equals(CellType.NUMERIC) || !args[1].getFunctionResultType().equals(CellType.NUMERIC))
-                && (!args[0].getFunctionResultType().equals(CellType.UNKNOWN) || !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
+        if ((!args[0].getFunctionResultType().equals(CellType.NUMERIC) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN))
+                || (!args[1].getFunctionResultType().equals(CellType.NUMERIC) && !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
             throw new IllegalArgumentException("Invalid argument types for DIVIDE function. Expected NUMERIC, but got " + args[0].getFunctionResultType()
                     + " and " + args[1].getFunctionResultType());
         }

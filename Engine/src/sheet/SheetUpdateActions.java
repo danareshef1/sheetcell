@@ -8,4 +8,5 @@ public interface SheetUpdateActions {
     Sheet updateCellValueAndCalculate(int row, int column, String value);
     void incrementVersion();
     void addCell(Coordinate coordinate, Cell cell);
+    SheetImpl copySheet();
 }

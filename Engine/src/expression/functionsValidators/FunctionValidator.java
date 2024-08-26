@@ -98,5 +98,11 @@ public class FunctionValidator {
         String[] parts = expression.split(",", 2);
         return parts[0].trim().toUpperCase();
     }
+
+    public static String getCellIdForRef(String expression) {
+        expression = expression.substring(1, expression.length() - 1).trim();
+        String[] parts = expression.split(",", 2);
+        return parts[1].trim().toUpperCase();
+    }
 }
 

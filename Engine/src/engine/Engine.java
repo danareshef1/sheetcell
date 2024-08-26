@@ -8,6 +8,7 @@ import fromUI.DisplayCellDTO;
 import fromUI.LoadSheetDTO;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface Engine {
 
@@ -15,4 +16,6 @@ public interface Engine {
     void updateCellValue(CellUpdateDTO cellUpdateDTO);
     CellDTO displayCellValue(DisplayCellDTO displayCellDTO);
     SheetDTO displaySheet();
+    void ensureSheetLoaded();
+    void displaySheetVersions();
 }

@@ -93,8 +93,10 @@ public class CellImpl implements Cell {
         return dependsOnValues;
     }
 
-    public void addDependsOnValue(Cell value) {
-        dependsOnValues.add(value);
+    @Override
+    public void addDependsOnValue(Coordinate cell) {
+        Cell newCell = sheet.getCell(cell.getRow(), cell.getColumn());
+        dependsOnValues.add(newCell);
     }
 
     @Override
@@ -102,8 +104,10 @@ public class CellImpl implements Cell {
         return influencingOnValues;
     }
 
-    public void addInfluencingOnValues(Cell value) {
-        influencingOnValues.add(value);
+    @Override
+    public void addInfluencingOnValues(Coordinate cell) {
+        Cell newCell = sheet.getCell(cell.getRow(), cell.getColumn());
+        influencingOnValues.add(newCell);
     }
 
     public EffectiveValue getContent() {
@@ -115,7 +119,7 @@ public class CellImpl implements Cell {
 
     @Override
     public boolean calculateEffectiveValue() {
-        Expression expression = ExpressionFactory.createExpression(originalValue);
+        Expression expression = ExpressionFactory.createExpression(sheet, originalValue, cellId);
         EffectiveValue newEffectiveValue = expression.evaluate(sheet);
 
         if (newEffectiveValue.equals(effectiveValue)) {

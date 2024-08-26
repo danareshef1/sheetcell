@@ -1,25 +1,19 @@
 //package menu.menuItems.selectionFive;
 //
+//import engine.Engine;
+//import engine.EngineImpl;
+//import fromEngine.SheetDTO;
 //import menu.MenuItem;
 //import menu.MenuItemListener;
-//import sheet.Sheet;
-//import sheet.cell.Cell;
-//import sheet.coordinate.Coordinate;
-//import sheet.coordinate.CoordinateFactory;
 //
-//import java.util.HashMap;
 //import java.util.Map;
 //import java.util.Scanner;
 //
 //public class VersionManager implements MenuItemListener {
-//
-//    private final Sheet sheet;
-//    private final Map<Integer, Map<Coordinate, Cell>> versionsHistory;
+//    private final Engine engine = EngineImpl.getInstance();
 //
 //    public VersionManager(MenuItem menuItem) {
 //        menuItem.addItemSelectedListener(this);
-//        this.sheet = sheet;
-//        this.versionsHistory = new HashMap<>();
 //    }
 //
 //    @Override
@@ -27,51 +21,46 @@
 //        displayVersions();
 //    }
 //
-////    public void saveVersion() {
-////        int versionNumber = sheet.getVersion();
-////        Map<Coordinate, Cell> currentVersion = new HashMap<>(sheet.getActiveCells());
-////        versionsHistory.put(versionNumber, currentVersion);
-////    }
-//
-//    public void displayVersions() {
-//        System.out.println("Version History:");
-//        System.out.println("Version | Changed Cells");
-//
-//        for (Map.Entry<Integer, Map<Coordinate, Cell>> entry : versionsHistory.entrySet()) {
-//            int versionNumber = entry.getKey();
-//            int changedCells = entry.getValue().size();
-//            System.out.println(versionNumber + "       | " + changedCells);
-//        }
-//
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.print("Enter version number to view: ");
-//        int versionToView = scanner.nextInt();
-//
-//        if (!versionsHistory.containsKey(versionToView)) {
-//            System.out.println("Invalid version number. Please try again.");
-//            return;
-//        }
-//
-//        displaySheetAtVersion(versionToView);
+//    private void displayVersions() {
+//        displayVersionsTable(engine.displaySheet().getVersion());
+//        int version = getVersionNumber(engine.displaySheet().getVersion());
+//        System.out.println("Displaying sheet for version " + version + ":");
+//        System.out.println(engine.displaySheetVersions().toString());
 //    }
 //
-//    private void displaySheetAtVersion(int versionNumber) {
-//        Map<Coordinate, Cell> versionData = versionsHistory.get(versionNumber);
-//
-//        System.out.println("Sheet status at version " + versionNumber + ":");
-//
-//        for (int row = 0; row < sheet.getSheetSize().getNumRows(); row++) {
-//            for (int col = 0; col < sheet.getSheetSize().getNumCols(); col++) {
-//                Coordinate coordinate = CoordinateFactory.createCoordinate(row, col);
-//                Cell cell = versionData.get(coordinate);
-//
-//                if (cell != null) {
-//                    System.out.print(cell.getCellId() + ": " + cell.getEffectiveValue() + " | ");
-//                } else {
-//                    System.out.print("Empty | ");
-//                }
-//            }
-//            System.out.println();
+//    private void displayVersionsTable(int version) {
+//        System.out.println("Version number | Number of changes");
+//        System.out.println("--------------- -------------------");
+//        for (int i=0;i<version; i++){
+//            int versionNumber = i+1;
+//            int changesNumber = engine.;
 //        }
+//    }
+//
+//    private int getVersion(int numVersions){
+//        Scanner scanner = new Scanner(System.in);
+//        while (true){
+//            System.out.println("Please Enter the version number of the sheet you would like to view: ");
+//            try{
+//                int versionNumber =
+//            }
+//        }
+//    }
+////    private void printVersionTable(Map<Integer, Integer> versionData) {
+////        System.out.println("Version | Cells Changed");
+////        for (Map.Entry<Integer, Integer> entry : versionData.entrySet()) {
+////            System.out.printf("%7d | %12d%n", entry.getKey(), entry.getValue());
+////        }
+////    }
+////
+////    private void displaySheetAtVersion(int versionNumber) {
+////        // Retrieve and display the sheet at the specified version
+////        SheetDTO sheetDTO = engine.getSheetAtVersion(versionNumber);
+////        printSheet(sheetDTO);
+////    }
+//
+//    private void printSheet(SheetDTO sheetDTO) {
+//        // Assuming the SheetDTO has a method toString or similar for printing
+//        System.out.println(sheetDTO);
 //    }
 //}

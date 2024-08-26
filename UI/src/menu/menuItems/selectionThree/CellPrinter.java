@@ -2,6 +2,8 @@ package menu.menuItems.selectionThree;
 
 import fromEngine.CellDTO;
 
+import java.util.List;
+
 public class CellPrinter {
 
     public static void displayCellDetails(CellDTO cell) {
@@ -24,17 +26,17 @@ public class CellPrinter {
         System.out.println("Original Value: " + (cell.getOriginalValue() != null ? cell.getOriginalValue() : "None"));
         System.out.println("Effective Value: " + (cell.getContent() != null ? cell.getContent() : "None"));
         System.out.println("Last Version Changed: " + cell.getVersion());
-        displayDependencies("Depends On: ", cell.getDependsOnValues());
-        displayDependencies("Affects: ", cell.getInfluencingOnValues());
+        displayDependencies("Depends On:", cell.getDependsOnValues());
+        displayDependencies("Affects:", cell.getInfluencingOnValues());
     }
 
-    private static void displayDependencies(String label, Iterable<?> dependencies) {
+    private static void displayDependencies(String label, List<CellDTO> dependencies) {
         System.out.print(label);
         if (!dependencies.iterator().hasNext()) {
-            System.out.println("None");
+            System.out.println(" None");
         } else {
-            for (Object dep : dependencies) {
-                System.out.print(dep + " ");
+            for (CellDTO cell : dependencies) {
+                System.out.print(" " + cell.getCellId());
             }
             System.out.println();
         }

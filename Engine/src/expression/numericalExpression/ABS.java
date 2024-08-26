@@ -21,9 +21,12 @@ public class ABS extends FunctionValidator implements NumericalExpression, Expre
     public EffectiveValue evaluate(SheetReadActions sheet) {
         EffectiveValue expression1 = expression.evaluate(sheet);
 
-        double result = Math.abs(expression1.extractValueWithExpectation(Double.class));
-
-        return new EffectiveValueImpl(CellType.NUMERIC, result);
+        try {
+            double result = Math.abs(expression1.extractValueWithExpectation(Double.class));
+            return new EffectiveValueImpl(CellType.NUMERIC, result);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The function ABS expecting for 1 number.");
+        }
     }
 
     @Override

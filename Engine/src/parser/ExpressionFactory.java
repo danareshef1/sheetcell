@@ -7,6 +7,10 @@ import expression.numericalExpression.*;
 import expression.stringExpression.CONCAT;
 import expression.stringExpression.SUB;
 import expression.systemicExpression.REF;
+import sheet.Sheet;
+import sheet.SheetReadActions;
+import sheet.coordinate.Coordinate;
+import sheet.coordinate.CoordinateFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,20 +32,31 @@ public class ExpressionFactory {
         parsers.put("REF", new REF(null));
     }
 
-    public static Expression createExpression(String expression) {
+    public static Expression createExpression(SheetReadActions sheet, String expression, String cellId) {
         expression = expression.trim();
+        Expression result;
 
         if (StringValidator.isNumber(expression))
-            return new Number(Double.parseDouble(expression));
-        if (StringValidator.isBool(expression))
-            return new Bool(Boolean.parseBoolean(expression));
-        if (StringValidator.isFunction(expression))
-            return parseFunction(expression);
+            result = new Number(Double.parseDouble(expression));
+        else if (StringValidator.isBool(expression))
+            result = new Bool(Boolean.parseBoolean(expression));
+        else if (StringValidator.isFunction(expression)) {
+            result = parseFunction(expression, sheet, cellId);
+            if (result instanceof REF){
+                String refCellId = FunctionValidator.getCellIdForRef(expression);
+                Coordinate ref = CoordinateFactory.cellIdToRowCol(refCellId.toUpperCase());
+                Coordinate cellIdCoordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
+                sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()).addDependsOnValue(ref);
+                sheet.getCell(ref.getRow(), ref.getColumn()).addInfluencingOnValues(cellIdCoordinate);
+            }
+        }
         else
-            return new Text(expression);
+            result = new Text(expression);
+
+        return result;
     }
 
-    public static Expression parseFunction(String expression) {
+    public static Expression parseFunction(String expression, SheetReadActions sheet, String cellId) {
         String functionName = FunctionValidator.getFunctionName(expression);
         ExpressionParser<?> parser = parsers.get(functionName);
 
@@ -56,7 +71,7 @@ public class ExpressionFactory {
             // Parse each argument recursively
             Expression[] parsedArgs = new Expression[args.length - 1];
             for (int i = 1; i < args.length; i++) {
-                parsedArgs[i - 1] = createExpression(args[i].trim());
+                parsedArgs[i - 1] = createExpression(sheet, args[i].trim(), cellId);
             }
 
             // Pass the parsed arguments to the specific parser

@@ -3,10 +3,12 @@ package menu.menuItems.selectionFour;
 import engine.Engine;
 import engine.EngineImpl;
 import fromEngine.CellDTO;
+import fromEngine.SheetDTO;
 import fromUI.CellUpdateDTO;
 import fromUI.DisplayCellDTO;
 import menu.MenuItem;
 import menu.MenuItemListener;
+import menu.menuItems.selectionTwo.SheetPrinter;
 
 import java.util.Scanner;
 
@@ -23,7 +25,7 @@ public class CellUpdater implements MenuItemListener {
         if (cellId != null) {
             String newValue = getNewValue();
             if (newValue != null) {
-                updateCellValue(newValue, cellId);
+                updateCellValue(newValue, cellId.toUpperCase());
             }
         }
     }
@@ -37,29 +39,34 @@ public class CellUpdater implements MenuItemListener {
 
     private void updateCellValue(String newValue, String cellId) {
         try {
-            engine.updateCellValue(new CellUpdateDTO(cellId, newValue));
+            engine.updateCellValue(new CellUpdateDTO(cellId.toUpperCase(), newValue));
             System.out.print("Cell value was updated successfully.");
+            System.out.println();
+            System.out.println("Here is the updated sheet:");
+            SheetDTO sheet = engine.displaySheet();
+            SheetPrinter.printSheet(sheet);
 
         } catch (Exception e) {
-            System.out.println("Error updating cell value." + e.getMessage());
+            System.out.println("Error updating cell value. " + e.getMessage());
         }
     }
 
     private String getCellId(){
         Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the cell address (e.g., A1): ");
-        String cellId = scanner.nextLine().trim();
 
         try {
-            CellDTO cellDTO = engine.displayCellValue(new DisplayCellDTO(cellId));
+            engine.ensureSheetLoaded();
+            System.out.print("Enter the cell address (e.g., A1): ");
+            String cellId = scanner.nextLine().trim();
+            CellDTO cellDTO = engine.displayCellValue(new DisplayCellDTO(cellId.toUpperCase()));
             if (cellDTO == null) {
-                System.out.println("Cell " + cellId + " was not found.");
+                System.out.println("Cell " + cellId.toUpperCase() + " was not found.");
             }else {
                 displayCellValues(cellDTO);
                 return cellId;
             }
         }catch (Exception e){
-            System.out.println("Error: " + e.getMessage());
+            System.out.println(e.getMessage());
         }
         return null;
     }

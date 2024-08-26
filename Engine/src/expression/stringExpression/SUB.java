@@ -41,9 +41,12 @@ public class SUB extends FunctionValidator implements StringExpression, Expressi
             return new EffectiveValueImpl(CellType.STRING, "!UNDEFINED!");
         }
 
-        String result = sourceString.substring(start, end);
-
-        return new EffectiveValueImpl(CellType.STRING, result);
+        try {
+            String result = sourceString.substring(start, end);
+            return new EffectiveValueImpl(CellType.STRING, result);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("The function SUB expecting for 1 string and 2 numbers in this order.");
+        }
     }
 
 
@@ -59,9 +62,9 @@ public class SUB extends FunctionValidator implements StringExpression, Expressi
         }
 
         // Check if both arguments are numerical expressions
-        if ((!args[0].getFunctionResultType().equals(CellType.STRING) || !args[1].getFunctionResultType().equals(CellType.NUMERIC)
-                || !args[2].getFunctionResultType().equals(CellType.NUMERIC)) && (!args[0].getFunctionResultType().equals(CellType.UNKNOWN)
-                || !args[1].getFunctionResultType().equals(CellType.UNKNOWN) || !args[2].getFunctionResultType().equals(CellType.UNKNOWN))) {
+        if ((!args[0].getFunctionResultType().equals(CellType.STRING) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN))
+                || (!args[1].getFunctionResultType().equals(CellType.NUMERIC) && !args[1].getFunctionResultType().equals(CellType.UNKNOWN))
+                || (!args[2].getFunctionResultType().equals(CellType.NUMERIC) && !args[2].getFunctionResultType().equals(CellType.UNKNOWN))) {
             throw new IllegalArgumentException("Invalid argument types for SUB function. Expected STRING, but got " + args[0].getFunctionResultType()
                     + " , " + args[1].getFunctionResultType() + " and " + args[2].getFunctionResultType());
         }

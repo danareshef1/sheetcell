@@ -1,30 +1,33 @@
 package fromEngine;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import expression.Expression;
-import fromUI.CellUpdateDTO;
-import parser.ExpressionFactory;
-import sheet.SheetReadActions;
 import sheet.cell.Cell;
-import sheet.cell.CellImpl;
-import sheet.cell.EffectiveValue;
 
 public class CellDTO {
     private String effectiveValue = null;
-    private String originalValue;
-    private int version;
-    private List<CellDTO> dependsOnValues;
-    private List<CellDTO> influencingOnValues;
-    private String cellId;
+    private final String originalValue;
+    private final int version;
+    private final List<CellDTO> dependsOnValues;
+    private final List<CellDTO> influencingOnValues;
+    private final String cellId;
 
     public CellDTO(Cell cell) {
-        this.cellId = cell.getCellId();
+        this(cell, new HashSet<>());
+    }
+
+    private CellDTO(Cell cell, Set<String> visited) {
+        this.cellId = cell.getCellId() != null ? cell.getCellId() : "";
         this.originalValue = cell.getOriginalValue();
         this.version = cell.getVersion();
-        this.influencingOnValues = setDependsOnValues(cell);
-        this.dependsOnValues = setInfluencingOnValues(cell);
+        // Mark this cell as visited
+        visited.add(this.cellId);
+        this.dependsOnValues = Collections.unmodifiableList(setDependsOnValues(cell, visited));
+        this.influencingOnValues = Collections.unmodifiableList(setInfluencingOnValues(cell, visited));
         if (originalValue != null) {
             this.effectiveValue = cell.getEffectiveValue().getValue().toString();
         } else {
@@ -32,18 +35,22 @@ public class CellDTO {
         }
     }
 
-    private List<CellDTO> setDependsOnValues(Cell currentCell) {
+    private List<CellDTO> setDependsOnValues(Cell currentCell, Set<String> visited) {
         List<CellDTO> dependsOnValues = new ArrayList<>();
-        for (Cell cell : currentCell.getDependsOnValues()){
-            dependsOnValues.add(new CellDTO(cell));
+        for (Cell cell : currentCell.getDependsOnValues()) {
+            if (!visited.contains(cell.getCellId())) {
+                dependsOnValues.add(new CellDTO(cell, visited));
+            }
         }
         return dependsOnValues;
     }
 
-    private List<CellDTO> setInfluencingOnValues(Cell currentCell) {
+    private List<CellDTO> setInfluencingOnValues(Cell currentCell, Set<String> visited) {
         List<CellDTO> influencingOnValues = new ArrayList<>();
-        for (Cell cell : currentCell.getInfluencingOnValues()){
-            influencingOnValues.add(new CellDTO(cell));
+        for (Cell cell : currentCell.getInfluencingOnValues()) {
+            if (!visited.contains(cell.getCellId())) {
+                influencingOnValues.add(new CellDTO(cell, visited));
+            }
         }
         return influencingOnValues;
     }
@@ -58,46 +65,24 @@ public class CellDTO {
     public String getContent() {
         return effectiveValue;
     }
+
     public String getOriginalValue() {
         return originalValue;
     }
+
     public int getVersion() {
         return version;
     }
+
     public List<CellDTO> getDependsOnValues() {
         return dependsOnValues;
     }
+
     public List<CellDTO> getInfluencingOnValues() {
         return influencingOnValues;
     }
+
     public String getCellId() {
         return cellId;
     }
-
-//    public void calculateEffectiveValue() {
-//        this.effectiveValue = calculateEffectiveValue(this.originalValue);
-//    }
-
-//    public void calculateEffectiveValue(SheetReadActions sheet) {
-//        if (this.originalValue != null) {
-//            Expression expression = ExpressionFactory.createExpression(this.originalValue);
-//            EffectiveValue evaluatedValue = expression.evaluate(sheet);
-//            this.effectiveValue = (evaluatedValue != null) ? evaluatedValue.toString() : null;
-//        } else {
-//            this.effectiveValue = null;
-//        }
-//    }
-
-//    // Update the cell's value and recalculate its effective value
-//    public void updateCell(String newValue, SheetReadActions sheet) {
-//        this.originalValue = newValue;
-//        calculateEffectiveValue(sheet);
-//        // updateVersion();
-//    }
-
-//    // Calculate the effective value
-//    private String calculateEffectiveValue(String value) {
-//        Expression<?> expression = ExpressionFactory.createExpression(value);
-//        return expression.evaluate().toString();
-//    }
 }

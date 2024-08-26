@@ -17,6 +17,7 @@ public class SheetPresentation implements MenuItemListener {
     @Override
     public void reportItemSelectedFromMenu() {
         try {
+            engine.ensureSheetLoaded();
             SheetDTO sheet = engine.displaySheet();
             SheetPrinter.printSheet(sheet);
         } catch (Exception e) {
