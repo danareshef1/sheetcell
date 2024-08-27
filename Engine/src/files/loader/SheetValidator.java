@@ -69,7 +69,7 @@ public class SheetValidator {
     private static void validateCells(STLSheet stlSheet, int numRows, int numCols){
         List<STLCell> cells = stlSheet.getSTLCells().getSTLCell();
         for (STLCell cell : cells) {
-            char column = cell.getColumn().charAt(0);
+            char column = cell.getColumn().toUpperCase().charAt(0);
             int row = cell.getRow();
 
             // Check if cell is within valid range

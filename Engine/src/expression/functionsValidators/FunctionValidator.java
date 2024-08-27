@@ -82,14 +82,14 @@ public class FunctionValidator {
             }
 
             if (c == ',' && braceCount == 0) {
-                parts.add(currentPart.toString().trim());
+                parts.add(currentPart.toString());
                 currentPart = new StringBuilder();
             } else {
                 currentPart.append(c);
             }
         }
 
-        parts.add(currentPart.toString().trim());
+        parts.add(currentPart.toString());
         return parts;
     }
 

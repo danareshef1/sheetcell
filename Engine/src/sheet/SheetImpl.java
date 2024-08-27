@@ -7,6 +7,7 @@ import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 import sheet.layout.LayoutImpl;
+import sheet.version.Version;
 import sheet.version.VersionImpl;
 
 import java.io.*;
@@ -195,12 +196,14 @@ public class SheetImpl implements Sheet {
 
     private void removeCoordinate(Coordinate coordinate) {
         Cell cell = activeCells.get(coordinate);
+        int cellVersion = 1;
 
-        if(cell != null){
+        if(cell != null) {
             cell.removeDependencies();
+            cellVersion = cell.getVersion()-1;
         }
-
-        activeCells.remove(coordinate);
+        cell = new CellImpl(coordinate.getRow(), coordinate.getColumn(), null, cellVersion, this);
+        activeCells.put(coordinate, cell);
     }
 
 
