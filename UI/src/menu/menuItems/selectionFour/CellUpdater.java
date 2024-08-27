@@ -34,7 +34,7 @@ public class CellUpdater implements MenuItemListener {
     {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Enter new value for the cell (leave empty to clear): ");
-        return scanner.nextLine().trim();
+        return scanner.nextLine();
     }
 
     private void updateCellValue(String newValue, String cellId) {

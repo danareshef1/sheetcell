@@ -1,11 +1,12 @@
 package menu;
 
+import java.text.ParseException;
 import java.util.Scanner;
 
 public class MainMenu {
     private static final String EXIT_MAIN_MENU = "Exit";
     private static final String BACK_FROM_SUB_MENU = "Back";
-    private static final int USER_CHOSE_FINISH_BLOCK = -1;
+    private static final int USER_CHOSE_FINISH_BLOCK = 6;
     private final MenuItem rootMenuItem;
     private MenuItem currentMenuItem;
 
@@ -20,39 +21,31 @@ public class MainMenu {
 
     public void show() {
         boolean ifUserChoseFinish = false;
-        String finishOptionText = updateFinishOptionText();
 
         while (!ifUserChoseFinish) {
-            displayCurrentMenu(finishOptionText);
+            displayCurrentMenu();
             int userChoice = getMenuChoiceFromUser();
 
             if (userChoice == USER_CHOSE_FINISH_BLOCK) {
                 ifUserChoseFinish = handleUserFinish();
-                finishOptionText = updateFinishOptionText();
             } else {
                 navigateToSubMenu(userChoice);
-                finishOptionText = updateFinishOptionText();
             }
         }
     }
 
-    private void displayCurrentMenu(String finishOptionText) {
-        currentMenuItem.show(finishOptionText);
-    }
+    private void displayCurrentMenu() {
+        String finishOptionText = currentMenuItem.getPrevMenuItem() == null ? EXIT_MAIN_MENU : BACK_FROM_SUB_MENU;
+        currentMenuItem.show(finishOptionText);    }
+
 
     private boolean handleUserFinish() {
-        boolean isUserFinish = true;
-
-        if (currentMenuItem.getPrevMenuItem() != null) {
-            isUserFinish = false;
-            currentMenuItem = currentMenuItem.getPrevMenuItem();
+        if (currentMenuItem.getPrevMenuItem() == null) {
+            return true; // User chose to exit the main menu
+        } else {
+            currentMenuItem = currentMenuItem.getPrevMenuItem(); // Go back to the previous menu
+            return false;
         }
-
-        return isUserFinish;
-    }
-
-    private String updateFinishOptionText() {
-        return (currentMenuItem.getPrevMenuItem() == null ? EXIT_MAIN_MENU : BACK_FROM_SUB_MENU);
     }
 
     private void navigateToSubMenu(int userChoice) {
@@ -65,7 +58,7 @@ public class MainMenu {
 
     private int getMenuChoiceFromUser() {
         Scanner scanner = new Scanner(System.in);
-        int userChoiceInt = 0;
+        int userChoiceInt = -1;
         boolean validInput = false;
 
         while (!validInput) {
@@ -81,14 +74,14 @@ public class MainMenu {
         return userChoiceInt;
     }
 
-    private int validateUserChoice(String userChoice) {
+    private int validateUserChoice(String userChoice) throws ParseException {
         try {
             int userChoiceInt = Integer.parseInt(userChoice);
-            if (userChoiceInt == rootMenuItem.getFinishOption()) {
+            if (userChoiceInt == USER_CHOSE_FINISH_BLOCK) {
                 return userChoiceInt;
             } else if (userChoiceInt < 1 || userChoiceInt > rootMenuItem.getSubMenuCount()) {
-                throw new IllegalArgumentException(String.format("Invalid input, expected a number between (1,%d) or %c",
-                        rootMenuItem.getSubMenuCount(), rootMenuItem.getFinishOption()));
+                throw new IllegalArgumentException(String.format("Invalid input, expected a number between (1,%d) or 0 to %s",
+                        currentMenuItem.getSubMenuCount(), currentMenuItem.getPrevMenuItem() == null ? EXIT_MAIN_MENU : BACK_FROM_SUB_MENU));
             }
             return userChoiceInt;
         } catch (NumberFormatException e) {

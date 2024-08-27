@@ -43,13 +43,29 @@ public class CellImpl implements Cell {
         return cellId;
     }
 
+//    @Override
+//    public void removeDependencies() {
+//        for (Cell cell : dependsOnValues) {
+//            cell.getInfluencingOnValues().remove(this);
+//        }
+//        for (Cell cell : influencingOnValues) {
+//            cell.getDependsOnValues().remove(this);
+//        }
+//    }
+
     @Override
     public void removeDependencies() {
-        for (Cell cell : dependsOnValues) {
-            cell.getInfluencingOnValues().remove(this);
+        // Remove this cell from the influencing list of all its dependencies
+        for (Cell dependency : dependsOnValues) {
+            dependency.getInfluencingOnValues().remove(this);
         }
-        for (Cell cell : influencingOnValues) {
-            cell.getDependsOnValues().remove(this);
+
+        // Clear the dependencies list
+        dependsOnValues.clear();
+
+        // Remove this cell from the dependency list of all cells it influences
+        for (Cell influenced : influencingOnValues) {
+            influenced.getDependsOnValues().remove(this);
         }
     }
 
@@ -63,16 +79,43 @@ public class CellImpl implements Cell {
         return originalValue;
     }
 
+//    @Override
+//    public void setCellOriginalValue(String value) {
+//        // Remove the current cell from influencing lists of all cells it depends on
+//        for (Cell cell : dependsOnValues) {
+//            cell.getInfluencingOnValues().remove(this);
+//        }
+//
+//        // Clear the dependsOnValues list
+//        dependsOnValues.clear();
+//
+//        // Update the original value
+//        this.originalValue = value;
+//
+//        // Recalculate the effective value
+//        if (originalValue != null) {
+//            calculateEffectiveValue();
+//        } else {
+//            effectiveValue = null;
+//        }
+//    }
+
     @Override
     public void setCellOriginalValue(String value) {
+        // Remove the old dependencies first
+        removeDependencies();
+
+        // Set the new value
         this.originalValue = value;
+
+        // Recalculate the effective value if the new value is not null
         if (originalValue != null) {
             calculateEffectiveValue();
-        }
-        else{
+        } else {
             effectiveValue = null;
         }
     }
+
 
     @Override
     public EffectiveValue getEffectiveValue() {

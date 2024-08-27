@@ -23,15 +23,19 @@ public class VersionManager implements MenuItemListener {
     }
 
     private void displayVersions() {
-        displayVersionsTable(engine.displaySheet().getVersion());
-        int version = getVersion(engine.displaySheet().getVersion());
-        System.out.println("Displaying sheet for version " + version + ":");
-        SheetPrinter.printSheet(engine.getSheetByVersion(version));
+        try {
+            engine.ensureSheetLoaded();
+            displayVersionsTable(engine.displaySheet().getVersion());
+            int version = getVersion(engine.displaySheet().getVersion());
+            System.out.println("Displaying sheet for version " + version + ":");
+            SheetPrinter.printSheet(engine.getSheetByVersion(version));
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     private void displayVersionsTable(int version) {
         try {
-            engine.ensureSheetLoaded();
             System.out.println("Version number | Number of changes");
             System.out.println("--------------- -------------------");
             for (int i = 0; i < version; i++) {

@@ -25,6 +25,12 @@ public class BuildMenu {
         //     /Users/danareshef/IdeaProjects/testXmlForSeetcell1/basic2.xml
         //     /Users/danareshef/IdeaProjects/testXmlForSeetcell1/insurance.xml
 
+
+        ////     /Users/danareshef/IdeaProjects/testsFromMamaEX1/basic.xml
+        ////     /Users/danareshef/IdeaProjects/testsFromMamaEX1/error-2.xml
+        ////     /Users/danareshef/IdeaProjects/testsFromMamaEX1/error-4.xml
+        ////     /Users/danareshef/IdeaProjects/testsFromMamaEX1/insurance.xml
+
         LoadFile loadFile = new LoadFile(oneSelection);
         SheetPresentation presentSheet = new SheetPresentation(twoSelection);
         CellPresentation presentCell = new CellPresentation(threeSelection);

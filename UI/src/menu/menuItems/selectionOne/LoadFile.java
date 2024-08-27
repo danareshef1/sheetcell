@@ -29,7 +29,7 @@ public class LoadFile implements MenuItemListener {
             engine.loadSheetFromFile(loadSheetDTO);
             System.out.println("File loaded successfully.");
         }catch (Exception e) {
-            System.out.println(e.getMessage());
+            System.out.println("can't load file: " + e.getMessage());
         }
     }
 }

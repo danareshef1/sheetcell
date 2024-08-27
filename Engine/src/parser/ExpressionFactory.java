@@ -33,7 +33,7 @@ public class ExpressionFactory {
     }
 
     public static Expression createExpression(SheetReadActions sheet, String expression, String cellId) {
-        expression = expression.trim();
+        //expression = expression.trim();
         Expression result;
 
         if (StringValidator.isNumber(expression))
@@ -71,7 +71,7 @@ public class ExpressionFactory {
             // Parse each argument recursively
             Expression[] parsedArgs = new Expression[args.length - 1];
             for (int i = 1; i < args.length; i++) {
-                parsedArgs[i - 1] = createExpression(sheet, args[i].trim(), cellId);
+                parsedArgs[i - 1] = createExpression(sheet, args[i], cellId);
             }
 
             // Pass the parsed arguments to the specific parser

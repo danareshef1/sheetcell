@@ -22,8 +22,6 @@ import java.util.*;
 public class EngineImpl implements Engine {
     private static EngineImpl instance;
     private Sheet sheet;
-//    private final Map<Integer, Version> versions = new HashMap<>(); // Store versions and their data
-    ///private VersionManager versionManager;
     private final List<Sheet> mainSheet = new ArrayList<>();
 
     public static synchronized EngineImpl getInstance() {
