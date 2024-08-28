@@ -5,7 +5,11 @@ import files.jaxb.schema.generated.STLCell;
 import files.jaxb.schema.generated.STLCells;
 import files.jaxb.schema.generated.STLSheet;
 import jakarta.xml.bind.JAXBException;
+import sheet.cell.Cell;
+import sheet.cell.CellImpl;
 import sheet.cellSize.CellSizeImpl;
+import sheet.coordinate.Coordinate;
+import sheet.coordinate.CoordinateFactory;
 import sheet.layout.LayoutImpl;
 import sheet.Sheet;
 import sheet.SheetImpl;
@@ -33,10 +37,16 @@ public class SheetFactory {
         for (int i = 0; i < stlSheet.getSTLCells().getSTLCell().size(); i++) {
             int[] cellId = cellIdToRowCol(stlSheet.getSTLCells().getSTLCell().get(i).getRow(),
                     stlSheet.getSTLCells().getSTLCell().get(i).getColumn().toUpperCase());
-            currentSheet.setCell(cellId[0], cellId[1],
-                    stlSheet.getSTLCells().getSTLCell().get(i).getSTLOriginalValue());
+            //currentSheet.setCell(cellId[0], cellId[1],
+            //    stlSheet.getSTLCells().getSTLCell().get(i).getSTLOriginalValue());
+            String originalValue = stlSheet.getSTLCells().getSTLCell().get(i).getSTLOriginalValue();
+            Cell newCell = new CellImpl(cellId[0], cellId[1], 0, currentSheet);
+            currentSheet.addCell(newCell);
+            newCell.setCellOriginalValue(originalValue, true);
+            currentSheet = currentSheet.updateCellValueAndCalculate(cellId[0], cellId[1], originalValue, true);
         }
     }
+
 
     public static int[] cellIdToRowCol(int row, String column) {
         // Convert column letter(s) to zero-based index

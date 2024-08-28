@@ -6,7 +6,7 @@ import java.util.Scanner;
 public class MainMenu {
     private static final String EXIT_MAIN_MENU = "Exit";
     private static final String BACK_FROM_SUB_MENU = "Back";
-    private static final int USER_CHOSE_FINISH_BLOCK = 6;
+    private static final int USER_CHOSE_FINISH_BLOCK = 8;
     private final MenuItem rootMenuItem;
     private MenuItem currentMenuItem;
 

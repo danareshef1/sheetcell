@@ -1,3 +1,4 @@
+
 package sheet.coordinate;
 
 import java.io.Serializable;
@@ -37,5 +38,17 @@ public class CoordinateImpl implements Coordinate {
         int result = row;
         result = 31 * result + column;
         return result;
+    }
+
+    @Override
+    public String createCellCoordinateString(){
+        String rowString =  String.valueOf(row +1);
+        String colString =  String.valueOf((char) ('A' + ((column -1 ) % 26)));
+        return colString + rowString;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("(row:%d, column:%d)", row, column);
     }
 }

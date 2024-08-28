@@ -76,4 +76,3 @@ public class SUB extends FunctionValidator implements StringExpression, Expressi
         return "{" + functionName + "," + expression1.evaluate(sheet) + "," + expression2.evaluate(sheet) + "," + expression3.evaluate(sheet) + "}";
     }
 }
-

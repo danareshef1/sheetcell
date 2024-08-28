@@ -105,4 +105,3 @@ public class FunctionValidator {
         return parts[1].trim().toUpperCase();
     }
 }
-

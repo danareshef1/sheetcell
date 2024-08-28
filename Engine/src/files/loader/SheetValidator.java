@@ -74,7 +74,7 @@ public class SheetValidator {
 
             // Check if cell is within valid range
             if (!isInBounds(column-'A', 0, numCols-1)
-            || !isInBounds(row, 0, numRows+1)){
+                    || !isInBounds(row, 0, numRows+1)){
                 throw new IllegalArgumentException("cell" + cell.getRow() + ":" + cell.getColumn() + " is not in valid range." +
                         "The range is " + numRows + " rows and " + numCols + " columns.");
             }

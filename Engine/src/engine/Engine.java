@@ -1,3 +1,4 @@
+
 package engine;
 
 import fromEngine.CellDTO;
@@ -19,4 +20,6 @@ public interface Engine {
     void ensureSheetLoaded();
     List<SheetDTO> displaySheetVersions();
     SheetDTO getSheetByVersion(int version);
+    void saveSystemState(LoadSheetDTO data);
+    void loadSystemState(LoadSheetDTO data);
 }

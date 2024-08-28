@@ -44,7 +44,7 @@ public class CONCAT extends FunctionValidator implements StringExpression, Expre
 
         // Check if both arguments are numerical expressions
         if ((!args[0].getFunctionResultType().equals(CellType.STRING) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN))
-            && (!args[1].getFunctionResultType().equals(CellType.STRING) || !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
+                && (!args[1].getFunctionResultType().equals(CellType.STRING) || !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
             throw new IllegalArgumentException("Invalid argument types for CONCAT function. Expected STRING, but got " + args[0].getFunctionResultType()
                     + " and " + args[1].getFunctionResultType());
         }

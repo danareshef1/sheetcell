@@ -29,20 +29,23 @@ public class CoordinateFactory {
             throw new IllegalArgumentException("Invalid cell ID: " + cellId);
         }
 
-        // Extract column part and row part
-        String colPart = cellId.replaceAll("\\d", ""); // Extracts letters
-        String rowPart = cellId.replaceAll("\\D", ""); // Extracts digits
+        // Extract column part (letters) and row part (digits)
+        String colPart = cellId.replaceAll("\\d", "").trim(); // Extracts letters and trims spaces
+        String rowPart = cellId.replaceAll("\\D", "").trim(); // Extracts digits and trims spaces
 
         try {
             // Convert column part to zero-based index
-            //int colIndex = colPart.chars().map(c -> c - 'A').sum();
             int colIndex = colPart.chars().reduce(0, (sum, c) -> sum * 26 + (c - 'A' + 1)) - 1;
-            int rowIndex = Integer.parseInt(rowPart) - 1; // Convert 1-based to 0-based
+
+            // Convert row part to zero-based index
+            int rowIndex = Integer.parseInt(rowPart) - 1;
+
             return createCoordinate(rowIndex, colIndex);
-        }catch (Exception e) {
-            throw new IllegalArgumentException("Invalid cell ID: " + cellId);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Invalid cell ID: " + cellId, e);
         }
     }
+
 
     public static void coordinateValidator(String cellId, LayoutImpl sheetSize) {
         Coordinate coordinate = cellIdToRowCol(cellId);
@@ -56,4 +59,3 @@ public class CoordinateFactory {
         }
     }
 }
-

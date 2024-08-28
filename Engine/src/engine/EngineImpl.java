@@ -1,3 +1,4 @@
+
 package engine;
 
 import files.loader.SheetFactory;
@@ -15,7 +16,7 @@ import fromUI.LoadSheetDTO;
 import sheet.layout.LayoutImpl;
 //import sheet.version.VersionManager;
 
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 
@@ -116,6 +117,26 @@ public class EngineImpl implements Engine {
         }
         else {
             throw new IllegalArgumentException("The new sheet cant be null.");
+        }
+    }
+
+    @Override
+    public void saveSystemState(LoadSheetDTO data) {
+        String filePath = data.getFilePath();
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath + ".ser"))) {
+            oos.writeObject(sheet);
+        } catch(IOException e){
+            throw new RuntimeException("Failed to save system state to " + filePath, e);
+        }
+    }
+
+    @Override
+    public void loadSystemState(LoadSheetDTO data) {
+        String filePath = data.getFilePath();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath + ".ser"))) {
+            this.sheet = (SheetImpl) ois.readObject();
+        }catch(IOException | ClassNotFoundException e){
+            throw new RuntimeException("Failed to load system state from " + filePath, e);
         }
     }
 }

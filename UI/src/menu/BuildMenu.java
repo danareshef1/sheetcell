@@ -5,6 +5,8 @@ import jakarta.xml.bind.JAXBException;
 import menu.menuItems.selectionFive.VersionManager;
 import menu.menuItems.selectionFour.CellUpdater;
 import menu.menuItems.selectionOne.LoadFile;
+import menu.menuItems.selectionSeven.LoadSystemState;
+import menu.menuItems.selectionSix.SaveSystenState;
 import menu.menuItems.selectionThree.CellPresentation;
 import menu.menuItems.selectionTwo.SheetPresentation;
 
@@ -21,6 +23,8 @@ public class BuildMenu {
         MenuItem threeSelection = mainMenu.addSubMenuItem("Present a cell in the sheet");
         MenuItem fourSelection = mainMenu.addSubMenuItem("Insert/Update value to a cell in the sheet");
         MenuItem fiveSelection = mainMenu.addSubMenuItem("Present versions of the sheet");
+        MenuItem sixSelection = mainMenu.addSubMenuItem("Save system state");
+        MenuItem sevenSelection = mainMenu.addSubMenuItem("Load system state");
 
         //     /Users/danareshef/IdeaProjects/testXmlForSeetcell1/basic2.xml
         //     /Users/danareshef/IdeaProjects/testXmlForSeetcell1/insurance.xml
@@ -36,6 +40,8 @@ public class BuildMenu {
         CellPresentation presentCell = new CellPresentation(threeSelection);
         CellUpdater sheetUpdater = new CellUpdater(fourSelection);
         VersionManager versionManager = new VersionManager(fiveSelection);
+        SaveSystenState saveSystenState = new SaveSystenState(sixSelection);
+        LoadSystemState loadSystemState = new LoadSystemState(sevenSelection);
 
         return mainMenu;
     }

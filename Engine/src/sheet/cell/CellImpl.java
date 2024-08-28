@@ -70,12 +70,18 @@ public class CellImpl implements Cell {
     public void removeDependencies() {
         // Remove this cell from the influencing list of all its dependencies
         for (Cell dependedCell : dependsOnValues) {
-            dependedCell.getInfluencingOnValues().remove(dependedCell);
+            dependedCell.getInfluencingOnValues().remove(this);
         }
         //remove edge?
 
+
+        for (Cell dependedCell : influencingOnValues) {
+            dependedCell.getDependsOnValues().remove(this);
+        }
+
         // Clear the dependencies list
         dependsOnValues.clear();
+        influencingOnValues.clear();
     }
 
     @Override
@@ -149,8 +155,9 @@ public class CellImpl implements Cell {
 
     @Override
     public void addDependsOnValue(Cell cell) {
+        if (!dependsOnValues.contains(cell)) {
             dependsOnValues.add(cell);
-
+        }
     }
 
     @Override
@@ -160,7 +167,9 @@ public class CellImpl implements Cell {
 
     @Override
     public void addInfluencingOnValues(Cell cell) {
+        if (!influencingOnValues.contains(cell)) {
             influencingOnValues.add(cell);
+        }
     }
 
     public EffectiveValue getContent() {
@@ -188,4 +197,3 @@ public class CellImpl implements Cell {
         }
     }
 }
-
