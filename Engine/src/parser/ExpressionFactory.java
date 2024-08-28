@@ -33,7 +33,7 @@ public class ExpressionFactory {
     }
 
     public static Expression createExpression(SheetReadActions sheet, String expression, String cellId) {
-        //expression = expression.trim();
+        expression = expression.trim();
         Expression result;
 
         if (StringValidator.isNumber(expression))

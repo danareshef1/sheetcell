@@ -79,8 +79,8 @@ public class SheetImpl implements Sheet {
         sheetBoundsCheck(row, column);
 
         if(activeCells.get(CoordinateFactory.createCoordinate(row, column)) == null){
-            SheetImpl newSheetVersion = copySheet();
-            return new CellImpl(row, column, null, 0, newSheetVersion);
+            //SheetImpl newSheetVersion = copySheet();
+            return new CellImpl(row, column, null, 0, this);
         }
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));
     }
@@ -101,10 +101,10 @@ public class SheetImpl implements Sheet {
         sheetBoundsCheck(row, column);
 
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-        SheetImpl newSheetVersion = copySheet();
+        //SheetImpl newSheetVersion = copySheet();
         Cell cell = activeCells.get(coordinate);
         if (cell == null) {
-            cell = new CellImpl(row, column, value, 0, newSheetVersion);
+            cell = new CellImpl(row, column, value, 0, this);
             activeCells.put(coordinate, cell);
         }
         cell.setCellOriginalValue(value,false); //לא בטוח שזה באמת לא שימושי בקריאה ראשונה- לבדוק ולהתאים
@@ -112,8 +112,8 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public void addCell(Coordinate coordinate, Cell cell) {
-        activeCells.put(coordinate, cell);
+    public void addCell(Cell cell) {
+        activeCells.put(cell.getCoordinate(), cell);
     }
 
     public SheetImpl updateCellValueAndCalculate(int row, int column, String value, boolean first) {
@@ -129,7 +129,9 @@ public class SheetImpl implements Sheet {
         //int numOfCellsThatHaveChanged = cellUpdated ? 1 : 0;
         int numOfCellsThatHaveChanged = 1;
 
-        newSheetVersion.handleEmptyCell(coordinate, value);
+        if(!first){
+            newSheetVersion.handleEmptyCell(coordinate, value);
+        }
 
         try {
             List<Cell> cellsThatHaveChanged = newSheetVersion.recalculateAndGetChangedCells();
@@ -212,7 +214,8 @@ public class SheetImpl implements Sheet {
         }
     }
 
-    private boolean updateOrCreateCell(Coordinate coordinate, int row, int column, String value, SheetImpl newSheetVersion) {
+    public boolean updateOrCreateCell(Coordinate coordinate, int row, int column, String value, SheetImpl newSheetVersion
+    ,boolean first) {
         Cell cell = activeCells.get(coordinate);
 
         if (cell != null) {
@@ -227,6 +230,8 @@ public class SheetImpl implements Sheet {
             }
             cell.setCellOriginalValue(value,first);
             cell.setVersion(newVersionNumber);
+
+
             return cell.calculateEffectiveValue();
         } else {
             cell = new CellImpl(row, column, value, 0, this);

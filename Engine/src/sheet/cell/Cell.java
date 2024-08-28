@@ -9,7 +9,7 @@ import java.util.List;
 public interface Cell extends Serializable {
     Coordinate getCoordinate();
     String getOriginalValue();
-    void setCellOriginalValue(String value);
+    void setCellOriginalValue(String value, boolean first);
 //    void setCellEffectiveValue(Expression<?> value);
     EffectiveValue getEffectiveValue();
     void addInfluencingOnValues(Cell cell);
@@ -17,7 +17,7 @@ public interface Cell extends Serializable {
     boolean calculateEffectiveValue();
     int getVersion();
     List<Cell> getDependsOnValues();
-    void addDependsOnValue(Coordinate cell);
+    void addDependsOnValue(Cell cell);
     List<Cell> getInfluencingOnValues();
     void updateVersion();
     String getCellId();

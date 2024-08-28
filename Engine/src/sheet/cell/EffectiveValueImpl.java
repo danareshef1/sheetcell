@@ -39,8 +39,7 @@ public class EffectiveValueImpl implements EffectiveValue {
 
         EffectiveValueImpl that = (EffectiveValueImpl) o;
 
-        if (cellType != that.cellType) return false;
-        return Objects.equals(value, that.value);
+        return (Objects.equals(this.value, that.value));
     }
 
     @Override
