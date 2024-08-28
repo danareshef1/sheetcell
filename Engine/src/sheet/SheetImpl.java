@@ -4,6 +4,7 @@ import expression.functionsValidators.FunctionValidator;
 import parser.StringValidator;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
+import sheet.cell.EffectiveValue;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 import sheet.layout.LayoutImpl;
@@ -106,7 +107,7 @@ public class SheetImpl implements Sheet {
             cell = new CellImpl(row, column, value, 0, newSheetVersion);
             activeCells.put(coordinate, cell);
         }
-        cell.setCellOriginalValue(value);
+        cell.setCellOriginalValue(value,false); //לא בטוח שזה באמת לא שימושי בקריאה ראשונה- לבדוק ולהתאים
         cell.updateVersion();
     }
 
@@ -115,11 +116,16 @@ public class SheetImpl implements Sheet {
         activeCells.put(coordinate, cell);
     }
 
-    public SheetImpl updateCellValueAndCalculate(int row, int column, String value) {
+    public SheetImpl updateCellValueAndCalculate(int row, int column, String value, boolean first) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-        SheetImpl newSheetVersion = copySheet();
+        SheetImpl newSheetVersion = this;
 
-        boolean cellUpdated = newSheetVersion.updateOrCreateCell(coordinate, row, column, value, newSheetVersion);
+        if(!first) {
+            newSheetVersion = copySheet();
+        }
+
+
+        boolean cellUpdated = newSheetVersion.updateOrCreateCell(coordinate, row, column, value, newSheetVersion,first);
         //int numOfCellsThatHaveChanged = cellUpdated ? 1 : 0;
         int numOfCellsThatHaveChanged = 1;
 
@@ -139,7 +145,44 @@ public class SheetImpl implements Sheet {
             throw new RuntimeException(e.getMessage());
         }
     }
+/*
+    public void onCellUpdated(String originalValue, Coordinate coordinate) {
+        countChangedCells = 0;
+        String previousOriginalValue = null;
+        EffectiveValue previousEffectiveValue = null;
+        Cell cell = activeCells.get(coordinate);
+        if (cell != null) {
+            previousOriginalValue = cell.getOriginalValue();
+            previousEffectiveValue = cell.getEffectiveValue();
+        } else {
+            cell = new CellImpl(coordinate.getRow(), coordinate.getColumn(), originalValue, version, this);
+            addCell(cell);
+        }
 
+        try {
+            cell.setCellOriginalValue(originalValue);
+            cell.removeDependencies();
+            if (cell.getEffectiveValue() == null) {
+
+                cell.setEffectiveValue(new EffectiveValue(coordinate));
+            }
+            cell.getEffectiveValue().calculateValue(this, originalValue);
+            updateCells(coordinate);
+            cell.setCellOriginalValue(originalValue);
+            countChangedCells = 1 + cell.getInfluencingOnValues().size();
+        } catch (IllegalArgumentException e){
+            throw e;
+        }
+        catch (Exception e) {
+            cell.setCellOriginalValue(previousOriginalValue);
+            cell.setEffectiveValue(previousEffectiveValue);
+            updateCells(coordinate);
+            throw new IllegalArgumentException("Failed to update cell at " +
+                    coordinate.createCellCoordinateString() + " because of " +
+                    e.getMessage());
+
+        }
+    }*/
     private List<Cell> recalculateAndGetChangedCells(){
         List<Cell> cellsThatHaveChanged = new ArrayList<>();
 
@@ -178,8 +221,11 @@ public class SheetImpl implements Sheet {
 //                Cell refCell = getCell(refCellCoordinate.getRow(), refCellCoordinate.getRow());
 //            }
             int newVersionNumber = newSheetVersion.activeCells.get(coordinate).getVersion() + 1;
-            cell.removeDependencies();
-            cell.setCellOriginalValue(value);
+
+            if(!first) {
+                cell.removeDependencies();
+            }
+            cell.setCellOriginalValue(value,first);
             cell.setVersion(newVersionNumber);
             return cell.calculateEffectiveValue();
         } else {

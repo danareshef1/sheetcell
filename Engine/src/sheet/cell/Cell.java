@@ -12,7 +12,7 @@ public interface Cell extends Serializable {
     void setCellOriginalValue(String value);
 //    void setCellEffectiveValue(Expression<?> value);
     EffectiveValue getEffectiveValue();
-    void addInfluencingOnValues(Coordinate cell);
+    void addInfluencingOnValues(Cell cell);
     void setVersion(int version);
     boolean calculateEffectiveValue();
     int getVersion();

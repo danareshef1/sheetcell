@@ -1,5 +1,8 @@
 package files.loader;
 
+import engine.EngineImpl;
+import files.jaxb.schema.generated.STLCell;
+import files.jaxb.schema.generated.STLCells;
 import files.jaxb.schema.generated.STLSheet;
 import jakarta.xml.bind.JAXBException;
 import sheet.cellSize.CellSizeImpl;
@@ -27,7 +30,7 @@ public class SheetFactory {
         layout = new LayoutImpl(stlSheet.getSTLLayout().getRows(), stlSheet.getSTLLayout().getColumns(), cellSize);
         currentSheet = new SheetImpl(stlSheet.getName(), layout, stlSheet.getSTLCells().getSTLCell().size());
 
-        for (int i=0; i<stlSheet.getSTLCells().getSTLCell().size(); i++){
+        for (int i = 0; i < stlSheet.getSTLCells().getSTLCell().size(); i++) {
             int[] cellId = cellIdToRowCol(stlSheet.getSTLCells().getSTLCell().get(i).getRow(),
                     stlSheet.getSTLCells().getSTLCell().get(i).getColumn().toUpperCase());
             currentSheet.setCell(cellId[0], cellId[1],

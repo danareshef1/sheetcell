@@ -1,9 +1,12 @@
 package sheet.cell;
 
 import expression.Expression;
+import expression.functionsValidators.FunctionValidator;
+import expression.systemicExpression.REF;
 import parser.ExpressionFactory;
 import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
+import sheet.coordinate.CoordinateFactory;
 import sheet.coordinate.CoordinateImpl;
 
 import java.io.FileOutputStream;
@@ -34,6 +37,16 @@ public class CellImpl implements Cell {
         }
     }
 
+    public CellImpl(int row, int column, int version, SheetReadActions sheet) {
+        this.sheet = sheet;
+        this.coordinate = new CoordinateImpl(row, column);
+        this.version = version;
+        this.dependsOnValues = new ArrayList<>();
+        this.influencingOnValues = new ArrayList<>();
+        this.cellId = (columnToString(column)) + "" + (row + 1);
+
+    }
+
     public static char columnToString(int col) {
         return (char)('A' + (col));
     }
@@ -56,17 +69,13 @@ public class CellImpl implements Cell {
     @Override
     public void removeDependencies() {
         // Remove this cell from the influencing list of all its dependencies
-        for (Cell dependency : dependsOnValues) {
-            dependency.getInfluencingOnValues().remove(this);
+        for (Cell dependedCell : dependsOnValues) {
+            dependedCell.getInfluencingOnValues().remove(dependedCell);
         }
+        //remove edge?
 
         // Clear the dependencies list
         dependsOnValues.clear();
-
-        // Remove this cell from the dependency list of all cells it influences
-        for (Cell influenced : influencingOnValues) {
-            influenced.getDependsOnValues().remove(this);
-        }
     }
 
     @Override
@@ -101,10 +110,11 @@ public class CellImpl implements Cell {
 //    }
 
     @Override
-    public void setCellOriginalValue(String value) {
+    public void setCellOriginalValue(String value,boolean first) {
         // Remove the old dependencies first
-        removeDependencies();
-
+        if(!first) {
+            removeDependencies();
+        }
         // Set the new value
         this.originalValue = value;
 
@@ -138,9 +148,9 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public void addDependsOnValue(Coordinate cell) {
-        Cell newCell = sheet.getCell(cell.getRow(), cell.getColumn());
-        dependsOnValues.add(newCell);
+    public void addDependsOnValue(Cell cell) {
+            dependsOnValues.add(cell);
+
     }
 
     @Override
@@ -149,9 +159,8 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public void addInfluencingOnValues(Coordinate cell) {
-        Cell newCell = sheet.getCell(cell.getRow(), cell.getColumn());
-        influencingOnValues.add(newCell);
+    public void addInfluencingOnValues(Cell cell) {
+            influencingOnValues.add(cell);
     }
 
     public EffectiveValue getContent() {

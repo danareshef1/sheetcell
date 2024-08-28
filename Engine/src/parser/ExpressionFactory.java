@@ -42,17 +42,18 @@ public class ExpressionFactory {
             result = new Bool(Boolean.parseBoolean(expression));
         else if (StringValidator.isFunction(expression)) {
             result = parseFunction(expression, sheet, cellId);
-            if (result instanceof REF){
-                String refCellId = FunctionValidator.getCellIdForRef(expression);
-                Coordinate ref = CoordinateFactory.cellIdToRowCol(refCellId.toUpperCase());
-                Coordinate cellIdCoordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
-                sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()).addDependsOnValue(ref);
-                sheet.getCell(ref.getRow(), ref.getColumn()).addInfluencingOnValues(cellIdCoordinate);
-            }
-        }
-        else
-            result = new Text(expression);
 
+        } else {
+            result = new Text(expression);
+        }
+
+        if (result instanceof REF) {
+            String refCellId = FunctionValidator.getCellIdForRef(expression);
+            Coordinate ref = CoordinateFactory.cellIdToRowCol(refCellId.toUpperCase());
+            Coordinate cellIdCoordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
+            sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()).addDependsOnValue(sheet.getCell(ref.getRow(), ref.getColumn()));
+            sheet.getCell(ref.getRow(), ref.getColumn()).addInfluencingOnValues(sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()));
+        }
         return result;
     }
 

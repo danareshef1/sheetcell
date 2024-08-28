@@ -41,7 +41,7 @@ public class EngineImpl implements Engine {
     @Override
     public void updateCellValue(CellUpdateDTO cellUpdateDTO) {
         Coordinate coordinateToUpdate = CoordinateFactory.cellIdToRowCol(cellUpdateDTO.getCellId().toUpperCase());
-        this.sheet = sheet.updateCellValueAndCalculate(coordinateToUpdate.getRow(), coordinateToUpdate.getColumn(), cellUpdateDTO.getNewValue());
+        this.sheet = sheet.updateCellValueAndCalculate(coordinateToUpdate.getRow(), coordinateToUpdate.getColumn(), cellUpdateDTO.getNewValue(), false);
         addSheet(sheet);
         //versionManager.saveVersion(sheet);
     }
@@ -94,7 +94,7 @@ public class EngineImpl implements Engine {
         Sheet newSheet = createSheetFrom(currentSheet);
         newSheet.incrementVersion();
 
-        newSheet.updateCellValueAndCalculate(coordinate.getRow(), coordinate.getColumn(), value);
+        newSheet.updateCellValueAndCalculate(coordinate.getRow(), coordinate.getColumn(), value, false);
         newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).setVersion(newSheet.getVersion());
         for (Cell coor : newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).getDependsOnValues()){
             Coordinate newCoor = CoordinateFactory.cellIdToRowCol(coor.getCellId().toUpperCase());
