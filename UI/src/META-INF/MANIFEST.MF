@@ -1,0 +1,6 @@
+Manifest-Version: 1.0
+Main-Class: Main
+Class-Path: engine.jar dto.jar mod/jaxb-core.jar mod/jaxb-impl.jar mod/j
+ axb-xjc.jar mod/jaxb-jxc.jar mod/jakarta.xml.bind-api.jar mod/jakarta.a
+ ctivation-api.jar mod/angus-activation.jar
+

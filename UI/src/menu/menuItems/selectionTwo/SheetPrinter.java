@@ -41,7 +41,7 @@ public class SheetPrinter {
     }
 
     // Helper method to format the cell content
-    private static String formatCellContent(String content) {
+    public static String formatCellContent(String content) {
         content = content.trim(); // Trim whitespaces at the start and end
 
         // Check if it's a boolean value

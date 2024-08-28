@@ -43,7 +43,6 @@ public class ExpressionFactory {
             result = new Bool(Boolean.parseBoolean(expression));
         else if (StringValidator.isFunction(expression)) {
             result = parseFunction(expression, sheet, cellId);
-
         } else {
             result = new Text(expression);
         }

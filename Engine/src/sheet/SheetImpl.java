@@ -4,16 +4,13 @@ import expression.functionsValidators.FunctionValidator;
 import parser.StringValidator;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
-import sheet.cell.EffectiveValue;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 import sheet.layout.LayoutImpl;
-import sheet.version.Version;
 import sheet.version.VersionImpl;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SheetImpl implements Sheet {
     private VersionImpl version;
@@ -22,9 +19,6 @@ public class SheetImpl implements Sheet {
     private final LayoutImpl size;
     private int countChangedCells;
     private Cell currentCalculatingCell;
-    @Serial
-    private static final long serialVersionUID = 1L;
-
 
     public SheetImpl(String name, LayoutImpl size, int countChangedCells) {
         this.version = new VersionImpl();
@@ -140,7 +134,9 @@ public class SheetImpl implements Sheet {
             }
             cellsThatHaveChanged.forEach(Cell::updateVersion);
             numOfCellsThatHaveChanged += cellsThatHaveChanged.size();  ////
-            newSheetVersion.countChangedCells = numOfCellsThatHaveChanged;
+            if (!first) {
+                newSheetVersion.countChangedCells = numOfCellsThatHaveChanged;
+            }
 
             return newSheetVersion;
 

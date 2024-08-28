@@ -86,23 +86,23 @@ public class EngineImpl implements Engine {
         return SheetDTO.createSheetDTO(sheet.get());
     }
 
-    public void setCellValue(String cellId, String value) throws ParseException {
-        Coordinate coordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
-        if (mainSheet.isEmpty()) {
-            throw new IllegalStateException("There is no sheet available to update");
-        }
-        Sheet currentSheet = mainSheet.getLast();
-        Sheet newSheet = createSheetFrom(currentSheet);
-        newSheet.incrementVersion();
-
-        newSheet.updateCellValueAndCalculate(coordinate.getRow(), coordinate.getColumn(), value, false);
-        newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).setVersion(newSheet.getVersion());
-        for (Cell coor : newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).getDependsOnValues()){
-            Coordinate newCoor = CoordinateFactory.cellIdToRowCol(coor.getCellId().toUpperCase());
-            newSheet.getCell(newCoor.getRow(), newCoor.getColumn()).setVersion(newSheet.getVersion());
-        }
-        mainSheet.add(newSheet);
-    }
+//    public void setCellValue(String cellId, String value) throws ParseException {
+//        Coordinate coordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
+//        if (mainSheet.isEmpty()) {
+//            throw new IllegalStateException("There is no sheet available to update");
+//        }
+//        Sheet currentSheet = mainSheet.getLast();
+//        Sheet newSheet = createSheetFrom(currentSheet);
+//        newSheet.incrementVersion();
+//
+//        newSheet.updateCellValueAndCalculate(coordinate.getRow(), coordinate.getColumn(), value, false);
+//        newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).setVersion(newSheet.getVersion());
+//        for (Cell coor : newSheet.getCell(coordinate.getRow(), coordinate.getColumn()).getDependsOnValues()){
+//            Coordinate newCoor = CoordinateFactory.cellIdToRowCol(coor.getCellId().toUpperCase());
+//            newSheet.getCell(newCoor.getRow(), newCoor.getColumn()).setVersion(newSheet.getVersion());
+//        }
+//        mainSheet.add(newSheet);
+//    }
 
     public Sheet createSheetFrom(Sheet sheet){
         String newSheetName = sheet.getName();

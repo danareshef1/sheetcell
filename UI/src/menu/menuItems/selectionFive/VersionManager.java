@@ -64,18 +64,6 @@ public class VersionManager implements MenuItemListener {
             }
         }
     }
-//    private void printVersionTable(Map<Integer, Integer> versionData) {
-//        System.out.println("Version | Cells Changed");
-//        for (Map.Entry<Integer, Integer> entry : versionData.entrySet()) {
-//            System.out.printf("%7d | %12d%n", entry.getKey(), entry.getValue());
-//        }
-//    }
-//
-//    private void displaySheetAtVersion(int versionNumber) {
-//        // Retrieve and display the sheet at the specified version
-//        SheetDTO sheetDTO = engine.getSheetAtVersion(versionNumber);
-//        printSheet(sheetDTO);
-//    }
 
     private void printSheet(SheetDTO sheetDTO) {
         // Assuming the SheetDTO has a method toString or similar for printing

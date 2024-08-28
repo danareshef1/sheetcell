@@ -5,6 +5,8 @@ import fromEngine.CellDTO;
 
 import java.util.List;
 
+import static menu.menuItems.selectionTwo.SheetPrinter.formatCellContent;
+
 public class CellPrinter {
 
     public static void displayCellDetails(CellDTO cell) {
@@ -25,7 +27,7 @@ public class CellPrinter {
         System.out.println("------------------");
         System.out.println("Cell ID: " + cell.getCellId());
         System.out.println("Original Value: " + (cell.getOriginalValue() != null ? cell.getOriginalValue() : "None"));
-        System.out.println("Effective Value: " + (cell.getContent() != null ? cell.getContent() : "None"));
+        System.out.println("Effective Value: " + (cell.getContent() != null ? formatCellContent(cell.getContent()) : "None"));
         System.out.println("Last Version Changed: " + cell.getVersion());
         displayDependencies("Depends On:", cell.getDependsOnValues());
         displayDependencies("Affects:", cell.getInfluencingOnValues());

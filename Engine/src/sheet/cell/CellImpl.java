@@ -1,15 +1,13 @@
 package sheet.cell;
 
 import expression.Expression;
-import expression.functionsValidators.FunctionValidator;
-import expression.systemicExpression.REF;
 import parser.ExpressionFactory;
+import parser.StringValidator;
 import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
-import sheet.coordinate.CoordinateFactory;
 import sheet.coordinate.CoordinateImpl;
-
-import java.io.FileOutputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
