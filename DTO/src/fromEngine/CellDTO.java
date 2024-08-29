@@ -1,33 +1,33 @@
 package fromEngine;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import sheet.cell.Cell;
+import sheet.coordinate.Coordinate;
 
 public class CellDTO {
     private String effectiveValue = null;
     private final String originalValue;
     private final int version;
-    private final List<CellDTO> dependsOnValues;
-    private final List<CellDTO> influencingOnValues;
+    private final Set<Coordinate> dependsOnValues;
+    private final Set<Coordinate> influencingOnValues;
     private final String cellId;
+    private final Cell cell;
 
     public CellDTO(Cell cell) {
         this(cell, new HashSet<>());
     }
 
     private CellDTO(Cell cell, Set<String> visited) {
+        this.cell = cell;
         this.cellId = cell.getCellId() != null ? cell.getCellId() : "";
         this.originalValue = cell.getOriginalValue();
         this.version = cell.getVersion();
-        // Mark this cell as visited
-        visited.add(this.cellId);
-        this.dependsOnValues = Collections.unmodifiableList(setDependsOnValues(cell, visited));
-        this.influencingOnValues = Collections.unmodifiableList(setInfluencingOnValues(cell, visited));
+        this.dependsOnValues = getDependsOn();
+        this.influencingOnValues = getInfluencingOn();
         if (originalValue != null) {
             this.effectiveValue = cell.getEffectiveValue().getValue().toString();
         } else {
@@ -35,24 +35,18 @@ public class CellDTO {
         }
     }
 
-    private List<CellDTO> setDependsOnValues(Cell currentCell, Set<String> visited) {
-        List<CellDTO> dependsOnValues = new ArrayList<>();
-        for (Cell cell : currentCell.getDependsOnValues()) {
-            if (!visited.contains(cell.getCellId())) {
-                dependsOnValues.add(new CellDTO(cell, visited));
-            }
-        }
-        return dependsOnValues;
-    }
+    public Set<Coordinate> getDependsOn() { return extractCoordinates(cell.getDependsOnValues()); }
 
-    private List<CellDTO> setInfluencingOnValues(Cell currentCell, Set<String> visited) {
-        List<CellDTO> influencingOnValues = new ArrayList<>();
-        for (Cell cell : currentCell.getInfluencingOnValues()) {
-            if (!visited.contains(cell.getCellId())) {
-                influencingOnValues.add(new CellDTO(cell, visited));
-            }
+    public Set<Coordinate> getInfluencingOn() { return extractCoordinates(cell.getInfluencingOnValues()); }
+
+    private Set<Coordinate> extractCoordinates(Set<Cell> cells) {
+        if (cells == null) {
+            return Collections.emptySet();
         }
-        return influencingOnValues;
+
+        return cells.stream()
+                .map(Cell::getCoordinate)
+                .collect(Collectors.toSet());
     }
 
     public static CellDTO createCellDTO(Cell cell) {
@@ -72,14 +66,6 @@ public class CellDTO {
 
     public int getVersion() {
         return version;
-    }
-
-    public List<CellDTO> getDependsOnValues() {
-        return dependsOnValues;
-    }
-
-    public List<CellDTO> getInfluencingOnValues() {
-        return influencingOnValues;
     }
 
     public String getCellId() {

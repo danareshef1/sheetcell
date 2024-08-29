@@ -4,6 +4,7 @@ package expression.systemicExpression;
 import expression.Expression;
 import expression.functionsValidators.FunctionValidator;
 import parser.ExpressionParser;
+import sheet.cell.Cell;
 import sheet.coordinate.CoordinateFactory;
 import sheet.SheetReadActions;
 import sheet.cell.CellType;
@@ -31,6 +32,10 @@ public class REF extends FunctionValidator implements SystemicExpression, Expres
             throw new IllegalArgumentException("The cell you chose to ref to is empty. " +
                     "You cant reference to an empty cell");
         }
+
+        Cell refCell = sheet.getCell(coordinate.getRow(), coordinate.getColumn());
+        sheet.getCurrentCalculatingCell().addDependsOnValue(refCell);
+        refCell.addInfluencingOnValues(sheet.getCurrentCalculatingCell());
 
         return sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getEffectiveValue();
     }

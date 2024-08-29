@@ -1,15 +1,15 @@
 package files.loader;
 
+import files.jaxb.schema.generated.STLCell;
 import files.jaxb.schema.generated.STLSheet;
 import jakarta.xml.bind.JAXBException;
-import sheet.cell.Cell;
-import sheet.cell.CellImpl;
 import sheet.cellSize.CellSizeImpl;
 import sheet.layout.LayoutImpl;
 import sheet.Sheet;
 import sheet.SheetImpl;
 
 import java.io.*;
+import java.util.List;
 
 public class SheetFactory {
     private static Sheet currentSheet;
@@ -29,13 +29,13 @@ public class SheetFactory {
         layout = new LayoutImpl(stlSheet.getSTLLayout().getRows(), stlSheet.getSTLLayout().getColumns(), cellSize);
         currentSheet = new SheetImpl(stlSheet.getName(), layout, stlSheet.getSTLCells().getSTLCell().size());
 
-        for (int i = 0; i < stlSheet.getSTLCells().getSTLCell().size(); i++) {
-            int[] cellId = cellIdToRowCol(stlSheet.getSTLCells().getSTLCell().get(i).getRow(),
-                    stlSheet.getSTLCells().getSTLCell().get(i).getColumn().toUpperCase());
-            String originalValue = stlSheet.getSTLCells().getSTLCell().get(i).getSTLOriginalValue();
-            //Cell newCell = new CellImpl(cellId[0], cellId[1], 0, currentSheet);
-            //currentSheet.addCell(newCell);
-            //newCell.setCellOriginalValue(originalValue, true);
+        List<STLCell> stlCells = stlSheet.getSTLCells().getSTLCell();
+
+        for (STLCell stlCell : stlCells) {
+            int row = stlCell.getRow();
+            String column = stlCell.getColumn().toUpperCase();
+            int[] cellId = cellIdToRowCol(row, column);
+            String originalValue = stlCell.getSTLOriginalValue();
             currentSheet = currentSheet.updateCellValueAndCalculate(cellId[0], cellId[1], originalValue, true);
         }
     }

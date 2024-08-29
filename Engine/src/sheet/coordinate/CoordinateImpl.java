@@ -38,8 +38,7 @@ public class CoordinateImpl implements Coordinate {
         return result;
     }
 
-    @Override
     public String toString() {
-        return String.format("(row:%d, column:%d)", row, column);
+        return "" + (char) ('A' + column) + (row + 1);
     }
 }

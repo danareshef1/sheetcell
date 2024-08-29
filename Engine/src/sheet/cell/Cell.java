@@ -1,9 +1,8 @@
 package sheet.cell;
 
 import sheet.coordinate.Coordinate;
-
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 public interface Cell extends Serializable {
     Coordinate getCoordinate();
@@ -14,9 +13,9 @@ public interface Cell extends Serializable {
     void setVersion(int version);
     boolean calculateEffectiveValue();
     int getVersion();
-    List<Cell> getDependsOnValues();
+    Set<Cell> getDependsOnValues();
     void addDependsOnValue(Cell cell);
-    List<Cell> getInfluencingOnValues();
+    Set<Cell> getInfluencingOnValues();
     void updateVersion();
     String getCellId();
     void removeDependencies();

@@ -1,7 +1,5 @@
 package sheet;
 
-import expression.functionsValidators.FunctionValidator;
-import parser.StringValidator;
 import sheet.cell.Cell;
 import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
@@ -75,25 +73,17 @@ public class SheetImpl implements Sheet {
         }
     }
 
-    @Override
-    public void addCell(Cell cell) {
-        activeCells.put(cell.getCoordinate(), cell);
-    }
-
     public SheetImpl updateCellValueAndCalculate(int row, int column, String value, boolean first) {
         Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
         SheetImpl newSheetVersion = this;
-
         if(!first) {
             newSheetVersion = copySheet();
         }
-
         newSheetVersion.updateOrCreateCell(coordinate, row, column, value, newSheetVersion,first);
         int numOfCellsThatHaveChanged = 1;
         if(!first){
-            newSheetVersion.handleEmptyCell(coordinate, value);
+            newSheetVersion.handleEmptyCell(coordinate, value, newSheetVersion);
         }
-
         try {
             List<Cell> cellsThatHaveChanged = newSheetVersion.recalculateAndGetChangedCells();
             if (!first) {
@@ -124,18 +114,19 @@ public class SheetImpl implements Sheet {
         return cellsThatHaveChanged;
     }
 
-    private void setCurrentCalculatingCell(Cell cell) {
-        if (StringValidator.isFunction(cell.getOriginalValue())) {
-            if (Objects.equals("REF", FunctionValidator.getFunctionName(cell.getOriginalValue()).toUpperCase())) {
-                Coordinate refCellCoordinate = CoordinateFactory.cellIdToRowCol(FunctionValidator.getCellIdForRef(cell.getOriginalValue()));
-                this.currentCalculatingCell = getCell(refCellCoordinate.getRow(), refCellCoordinate.getRow());
-            }
-        }
+    @Override
+    public void setCurrentCalculatingCell(Cell cell) {
+        this.currentCalculatingCell = cell;
     }
 
-    private void handleEmptyCell(Coordinate coordinate, String value) {
+    @Override
+    public Cell getCurrentCalculatingCell() {
+        return this.currentCalculatingCell;
+    }
+
+    private void handleEmptyCell(Coordinate coordinate, String value, SheetImpl sheet) {
         if(value.isEmpty()){
-            removeCoordinate(coordinate);
+            removeCoordinate(coordinate, sheet);
         }
     }
 
@@ -158,15 +149,14 @@ public class SheetImpl implements Sheet {
         }
     }
 
-    private void removeCoordinate(Coordinate coordinate) {
+    private void removeCoordinate(Coordinate coordinate, SheetImpl sheet) {
         Cell cell = activeCells.get(coordinate);
-        int cellVersion = 1;
+        int version = sheet.getVersion()+1;
 
         if(cell != null) {
             cell.removeDependencies();
-            cellVersion = cell.getVersion()-1;
         }
-        cell = new CellImpl(coordinate.getRow(), coordinate.getColumn(), null, cellVersion, this);
+        cell = new CellImpl(coordinate.getRow(), coordinate.getColumn(), null, version, this);
         activeCells.put(coordinate, cell);
     }
 

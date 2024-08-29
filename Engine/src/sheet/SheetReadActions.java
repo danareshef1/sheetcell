@@ -11,4 +11,7 @@ public interface SheetReadActions {
     String getName();
     Layout getSheetSize();
     Map<Coordinate,Cell> getActiveCells();
+    int getCountChangedCells();
+    void setCurrentCalculatingCell(Cell currentCalculatingCell);
+    Cell getCurrentCalculatingCell();
 }

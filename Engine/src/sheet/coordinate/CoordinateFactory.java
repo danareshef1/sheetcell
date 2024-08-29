@@ -1,7 +1,6 @@
 package sheet.coordinate;
 
 import sheet.layout.Layout;
-import sheet.layout.LayoutImpl;
 import java.util.HashMap;
 import java.util.Map;
 import static sheet.cell.CellImpl.columnToString;

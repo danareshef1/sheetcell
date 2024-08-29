@@ -1,7 +1,6 @@
 package fromEngine;
 
 import sheet.layout.Layout;
-import sheet.layout.LayoutImpl;
 import sheet.Sheet;
 import sheet.cell.Cell;
 import sheet.coordinate.Coordinate;
