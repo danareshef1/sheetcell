@@ -2,10 +2,8 @@ package files.loader;
 
 import files.jaxb.schema.generated.STLCell;
 import files.jaxb.schema.generated.STLSheet;
-import parser.StringValidator;
 import sheet.cellSize.CellSizeImpl;
 import sheet.layout.LayoutImpl;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;

@@ -2,12 +2,9 @@ package sheet.cell;
 
 import expression.Expression;
 import parser.ExpressionFactory;
-import parser.StringValidator;
 import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateImpl;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +18,6 @@ public class CellImpl implements Cell {
     private String cellId;
     private final SheetReadActions sheet;
 
-    // Constructor
     public CellImpl(int row, int column, String originalValue, int version, SheetReadActions sheet) {
         this.sheet = sheet;
         this.coordinate = new CoordinateImpl(row, column);
@@ -35,16 +31,6 @@ public class CellImpl implements Cell {
         }
     }
 
-    public CellImpl(int row, int column, int version, SheetReadActions sheet) {
-        this.sheet = sheet;
-        this.coordinate = new CoordinateImpl(row, column);
-        this.version = version;
-        this.dependsOnValues = new ArrayList<>();
-        this.influencingOnValues = new ArrayList<>();
-        this.cellId = (columnToString(column)) + "" + (row + 1);
-
-    }
-
     public static char columnToString(int col) {
         return (char)('A' + (col));
     }
@@ -54,32 +40,15 @@ public class CellImpl implements Cell {
         return cellId;
     }
 
-//    @Override
-//    public void removeDependencies() {
-//        for (Cell cell : dependsOnValues) {
-//            cell.getInfluencingOnValues().remove(this);
-//        }
-//        for (Cell cell : influencingOnValues) {
-//            cell.getDependsOnValues().remove(this);
-//        }
-//    }
-
     @Override
     public void removeDependencies() {
         // Remove this cell from the influencing list of all its dependencies
         for (Cell dependedCell : dependsOnValues) {
             dependedCell.getInfluencingOnValues().remove(this);
         }
-        //remove edge?
-
-
-        for (Cell dependedCell : influencingOnValues) {
-            dependedCell.getDependsOnValues().remove(this);
-        }
 
         // Clear the dependencies list
         dependsOnValues.clear();
-        influencingOnValues.clear();
     }
 
     @Override
@@ -91,27 +60,6 @@ public class CellImpl implements Cell {
     public String getOriginalValue() {
         return originalValue;
     }
-
-//    @Override
-//    public void setCellOriginalValue(String value) {
-//        // Remove the current cell from influencing lists of all cells it depends on
-//        for (Cell cell : dependsOnValues) {
-//            cell.getInfluencingOnValues().remove(this);
-//        }
-//
-//        // Clear the dependsOnValues list
-//        dependsOnValues.clear();
-//
-//        // Update the original value
-//        this.originalValue = value;
-//
-//        // Recalculate the effective value
-//        if (originalValue != null) {
-//            calculateEffectiveValue();
-//        } else {
-//            effectiveValue = null;
-//        }
-//    }
 
     @Override
     public void setCellOriginalValue(String value,boolean first) {
@@ -129,7 +77,6 @@ public class CellImpl implements Cell {
             effectiveValue = null;
         }
     }
-
 
     @Override
     public EffectiveValue getEffectiveValue() {

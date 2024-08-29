@@ -8,11 +8,10 @@ import expression.numericalExpression.*;
 import expression.stringExpression.CONCAT;
 import expression.stringExpression.SUB;
 import expression.systemicExpression.REF;
-import sheet.Sheet;
 import sheet.SheetReadActions;
+import sheet.cell.Cell;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +33,6 @@ public class ExpressionFactory {
     }
 
     public static Expression createExpression(SheetReadActions sheet, String expression, String cellId) {
-        //expression = expression.trim();
         Expression result;
 
         if (StringValidator.isNumber(expression))
@@ -47,36 +45,76 @@ public class ExpressionFactory {
             result = new Text(expression);
         }
 
+        updateDependenciesIfRef(sheet, expression, result, cellId);
+        return result;
+    }
+
+    private static void updateDependenciesIfRef(SheetReadActions sheet, String expression, Expression result, String cellId) {
         if (result instanceof REF) {
             String refCellId = FunctionValidator.getCellIdForRef(expression);
             Coordinate ref = CoordinateFactory.cellIdToRowCol(refCellId.toUpperCase());
             Coordinate cellIdCoordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
-            sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()).addDependsOnValue(sheet.getCell(ref.getRow(), ref.getColumn()));
-            sheet.getCell(ref.getRow(), ref.getColumn()).addInfluencingOnValues(sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()));
+
+            Cell refCell = sheet.getCell(ref.getRow(), ref.getColumn());
+            Cell currentCell = sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn());
+
+            // Add to dependencies and influencing lists
+            currentCell.addDependsOnValue(refCell);
+            refCell.addInfluencingOnValues(currentCell);
         }
-        return result;
     }
+
+//    public static Expression parseFunction(String expression, SheetReadActions sheet, String cellId) {
+//        String functionName = FunctionValidator.getFunctionName(expression);
+//        ExpressionParser<?> parser = parsers.get(functionName);
+//
+//        if (parser != null) {
+//            // Use the relevant validator for this function type
+//            FunctionValidator validator = new FunctionValidator();
+//            validator.functionName = functionName;
+//
+//            // Validate the function parts
+//            String[] args = validator.functionParts(expression);
+//
+//            // Parse each argument recursively
+//            Expression[] parsedArgs = new Expression[args.length - 1];
+//            for (int i = 1; i < args.length; i++) {
+//                parsedArgs[i - 1] = createExpression(sheet, args[i], cellId);
+//            }
+//
+//            // Pass the parsed arguments to the specific parser
+//            return parser.parse(parsedArgs);
+//        } else {
+//            throw new IllegalArgumentException("Unknown function: " + functionName);
+//        }
+//    }
 
     public static Expression parseFunction(String expression, SheetReadActions sheet, String cellId) {
         String functionName = FunctionValidator.getFunctionName(expression);
         ExpressionParser<?> parser = parsers.get(functionName);
 
         if (parser != null) {
-            // Use the relevant validator for this function type
             FunctionValidator validator = new FunctionValidator();
             validator.functionName = functionName;
 
-            // Validate the function parts
             String[] args = validator.functionParts(expression);
 
-            // Parse each argument recursively
             Expression[] parsedArgs = new Expression[args.length - 1];
             for (int i = 1; i < args.length; i++) {
                 parsedArgs[i - 1] = createExpression(sheet, args[i], cellId);
             }
 
-            // Pass the parsed arguments to the specific parser
-            return parser.parse(parsedArgs);
+            Expression result = parser.parse(parsedArgs);
+
+            // Check each argument for REF instances
+            for (int i = 0; i < parsedArgs.length; i++) {
+                if (parsedArgs[i] instanceof REF) {
+                    String refExpression = args[i + 1];
+                    updateDependenciesIfRef(sheet, refExpression, parsedArgs[i], cellId);
+                }
+            }
+
+            return result;
         } else {
             throw new IllegalArgumentException("Unknown function: " + functionName);
         }

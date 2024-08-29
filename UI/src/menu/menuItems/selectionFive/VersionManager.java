@@ -6,8 +6,6 @@ import fromEngine.SheetDTO;
 import menu.MenuItem;
 import menu.MenuItemListener;
 import menu.menuItems.selectionTwo.SheetPrinter;
-
-import java.util.Map;
 import java.util.Scanner;
 
 public class VersionManager implements MenuItemListener {
@@ -63,10 +61,5 @@ public class VersionManager implements MenuItemListener {
                 System.out.println("Please enter a valid number.");
             }
         }
-    }
-
-    private void printSheet(SheetDTO sheetDTO) {
-        // Assuming the SheetDTO has a method toString or similar for printing
-        System.out.println(sheetDTO);
     }
 }

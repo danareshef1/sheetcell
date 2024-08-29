@@ -26,7 +26,7 @@ public class DIVIDE extends FunctionValidator implements NumericalExpression, Ex
 
         try {
             if (rightValue.extractValueWithExpectation(Double.class) == 0)
-                return new EffectiveValueImpl(CellType.NUMERIC, "NaN");
+                return new EffectiveValueImpl(CellType.NUMERIC, Double.NaN);
             else {
                 double result = leftValue.extractValueWithExpectation(Double.class) / rightValue.extractValueWithExpectation(Double.class);
                 return new EffectiveValueImpl(CellType.NUMERIC, result);

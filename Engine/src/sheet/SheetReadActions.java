@@ -2,14 +2,13 @@ package sheet;
 
 import sheet.cell.Cell;
 import sheet.coordinate.Coordinate;
-import sheet.layout.LayoutImpl;
-
+import sheet.layout.Layout;
 import java.util.Map;
 
 public interface SheetReadActions {
     int getVersion();
     Cell getCell(int row, int column);
     String getName();
-    LayoutImpl getSheetSize();
+    Layout getSheetSize();
     Map<Coordinate,Cell> getActiveCells();
 }

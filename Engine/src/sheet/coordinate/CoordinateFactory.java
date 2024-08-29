@@ -1,18 +1,16 @@
 package sheet.coordinate;
 
+import sheet.layout.Layout;
 import sheet.layout.LayoutImpl;
-
 import java.util.HashMap;
 import java.util.Map;
-
 import static sheet.cell.CellImpl.columnToString;
 
 public class CoordinateFactory {
 
-    private static Map<String, Coordinate> cachedCoordinates = new HashMap<>();
+    private static final Map<String, Coordinate> cachedCoordinates = new HashMap<>();
 
     public static Coordinate createCoordinate(int row, int column) {
-
         String key = row + ":" + column;
         if (cachedCoordinates.containsKey(key)) {
             return cachedCoordinates.get(key);
@@ -46,14 +44,13 @@ public class CoordinateFactory {
         }
     }
 
-
-    public static void coordinateValidator(String cellId, LayoutImpl sheetSize) {
+    public static void coordinateValidator(String cellId, Layout sheetSize) {
         Coordinate coordinate = cellIdToRowCol(cellId);
-        if (coordinate.getRow() < sheetSize.getMinimumRows()-1 || coordinate.getRow() > sheetSize.getNumRows()-1) {
+        if (coordinate.getRow() < (sheetSize.getMinimumRows()-1) || coordinate.getRow() > (sheetSize.getNumRows()-1)) {
             throw new IllegalArgumentException("Row number is out of sheet range. The range is:" + sheetSize.getMinimumRows() +
-                    " to " + sheetSize.getNumRows() + ",and you entered " + coordinate.getRow()+1);
+                    " to " + sheetSize.getNumRows() + ",and you entered " + (coordinate.getRow()+1));
         }
-        if (coordinate.getColumn() < sheetSize.getMinimumCols()-1 || coordinate.getColumn() > sheetSize.getNumCols()-1) {
+        if (coordinate.getColumn() < (sheetSize.getMinimumCols()-1) || coordinate.getColumn() > (sheetSize.getNumCols()-1)) {
             throw new IllegalArgumentException("Column number is out of sheet range. The range is:" + columnToString(sheetSize.getMinimumCols()-1) +
                     " to " + columnToString(sheetSize.getNumCols()-1) + ",and you entered " + columnToString(coordinate.getColumn()));
         }

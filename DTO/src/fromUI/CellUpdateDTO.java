@@ -1,7 +1,5 @@
 package fromUI;
 
-import engine.EngineImpl;
-
 public class CellUpdateDTO {
     private final String cellId;
     private final String newValue;

@@ -7,10 +7,10 @@ import menu.MenuItem;
 import menu.MenuItemListener;
 import java.util.Scanner;
 
-public class SaveSystenState implements MenuItemListener {
+public class SaveSystemState implements MenuItemListener {
     public final Engine engine = EngineImpl.getInstance();
 
-    public SaveSystenState(MenuItem menuItem) {
+    public SaveSystemState(MenuItem menuItem) {
         menuItem.addItemSelectedListener(this);
     }
 

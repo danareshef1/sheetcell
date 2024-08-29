@@ -1,10 +1,9 @@
 package fromEngine;
 
-import fromUI.CellUpdateDTO;
+import sheet.layout.Layout;
 import sheet.layout.LayoutImpl;
 import sheet.Sheet;
 import sheet.cell.Cell;
-import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 
@@ -15,7 +14,7 @@ public class SheetDTO {
     private int version;
     private String name;
     private Map<Coordinate, CellDTO> activeCells;
-    private LayoutImpl size;
+    private Layout size;
     private int counterChangedCells;
 
     public SheetDTO(Sheet sheet) {
@@ -38,7 +37,7 @@ public class SheetDTO {
     public Map<Coordinate, CellDTO> getActiveCells() {
         return activeCells;
     }
-    public LayoutImpl getSheetSize() {
+    public Layout getSheetSize() {
         return size;
     }
     public CellDTO getCell(int row, int col) {

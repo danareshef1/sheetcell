@@ -6,21 +6,21 @@ import sheet.cell.Cell;
 import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
-import sheet.layout.LayoutImpl;
+import sheet.layout.Layout;
+import sheet.version.Version;
 import sheet.version.VersionImpl;
-
 import java.io.*;
 import java.util.*;
 
 public class SheetImpl implements Sheet {
-    private VersionImpl version;
+    private Version version;
     private final String name;
     private Map<Coordinate,Cell> activeCells;
-    private final LayoutImpl size;
+    private final Layout size;
     private int countChangedCells;
     private Cell currentCalculatingCell;
 
-    public SheetImpl(String name, LayoutImpl size, int countChangedCells) {
+    public SheetImpl(String name, Layout size, int countChangedCells) {
         this.version = new VersionImpl();
         this.name = name;
         this.size = size;
@@ -47,15 +47,6 @@ public class SheetImpl implements Sheet {
     @Override
     public void incrementVersion() {
         version.incrementVersion();
-        //saveVersion();
-    }
-
-    public int getCellChangedNumber() {
-        return version.getCellsChanged();
-    }
-
-    public void incrementCellChanged() {
-        version.incrementCellChanged();
     }
 
     @Override
@@ -64,7 +55,7 @@ public class SheetImpl implements Sheet {
     }
 
     @Override
-    public LayoutImpl getSheetSize() {
+    public Layout getSheetSize() {
         return size;
     }
 
@@ -73,36 +64,15 @@ public class SheetImpl implements Sheet {
         sheetBoundsCheck(row, column);
 
         if(activeCells.get(CoordinateFactory.createCoordinate(row, column)) == null){
-            //SheetImpl newSheetVersion = copySheet();
             return new CellImpl(row, column, null, 0, this);
         }
         return activeCells.get(CoordinateFactory.createCoordinate(row, column));
     }
-//
-//    @Override
-//    public Cell getCell(int row, int column) {
-//        return activeCells.get(CoordinateFactory.createCoordinate(row, column));
-//    }
 
     public void sheetBoundsCheck(int row, int column) {
         if (row > size.getNumRows() || column > size.getNumCols()) {
             throw new IllegalArgumentException("Those coordinates are out of the sheet's bounds.");
         }
-    }
-
-    @Override
-    public void setCell(int row, int column, String value) {
-        sheetBoundsCheck(row, column);
-
-        Coordinate coordinate = CoordinateFactory.createCoordinate(row, column);
-        //SheetImpl newSheetVersion = copySheet();
-        Cell cell = activeCells.get(coordinate);
-        if (cell == null) {
-            cell = new CellImpl(row, column, value, 0, this);
-            activeCells.put(coordinate, cell);
-        }
-        cell.setCellOriginalValue(value,false); //לא בטוח שזה באמת לא שימושי בקריאה ראשונה- לבדוק ולהתאים
-        cell.updateVersion();
     }
 
     @Override
@@ -118,70 +88,28 @@ public class SheetImpl implements Sheet {
             newSheetVersion = copySheet();
         }
 
-        boolean cellUpdated = newSheetVersion.updateOrCreateCell(coordinate, row, column, value, newSheetVersion,first);
-        //int numOfCellsThatHaveChanged = cellUpdated ? 1 : 0;
+        newSheetVersion.updateOrCreateCell(coordinate, row, column, value, newSheetVersion,first);
         int numOfCellsThatHaveChanged = 1;
-
         if(!first){
             newSheetVersion.handleEmptyCell(coordinate, value);
         }
 
         try {
             List<Cell> cellsThatHaveChanged = newSheetVersion.recalculateAndGetChangedCells();
-
             if (!first) {
                 newSheetVersion.incrementVersion();
             }
             cellsThatHaveChanged.forEach(Cell::updateVersion);
-            numOfCellsThatHaveChanged += cellsThatHaveChanged.size();  ////
+            numOfCellsThatHaveChanged += cellsThatHaveChanged.size();
             if (!first) {
                 newSheetVersion.countChangedCells = numOfCellsThatHaveChanged;
             }
-
             return newSheetVersion;
-
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
     }
-    /*
-        public void onCellUpdated(String originalValue, Coordinate coordinate) {
-            countChangedCells = 0;
-            String previousOriginalValue = null;
-            EffectiveValue previousEffectiveValue = null;
-            Cell cell = activeCells.get(coordinate);
-            if (cell != null) {
-                previousOriginalValue = cell.getOriginalValue();
-                previousEffectiveValue = cell.getEffectiveValue();
-            } else {
-                cell = new CellImpl(coordinate.getRow(), coordinate.getColumn(), originalValue, version, this);
-                addCell(cell);
-            }
 
-            try {
-                cell.setCellOriginalValue(originalValue);
-                cell.removeDependencies();
-                if (cell.getEffectiveValue() == null) {
-
-                    cell.setEffectiveValue(new EffectiveValue(coordinate));
-                }
-                cell.getEffectiveValue().calculateValue(this, originalValue);
-                updateCells(coordinate);
-                cell.setCellOriginalValue(originalValue);
-                countChangedCells = 1 + cell.getInfluencingOnValues().size();
-            } catch (IllegalArgumentException e){
-                throw e;
-            }
-            catch (Exception e) {
-                cell.setCellOriginalValue(previousOriginalValue);
-                cell.setEffectiveValue(previousEffectiveValue);
-                updateCells(coordinate);
-                throw new IllegalArgumentException("Failed to update cell at " +
-                        coordinate.createCellCoordinateString() + " because of " +
-                        e.getMessage());
-
-            }
-        }*/
     private List<Cell> recalculateAndGetChangedCells(){
         List<Cell> cellsThatHaveChanged = new ArrayList<>();
 
@@ -211,35 +139,24 @@ public class SheetImpl implements Sheet {
         }
     }
 
-    public boolean updateOrCreateCell(Coordinate coordinate, int row, int column, String value, SheetImpl newSheetVersion
+    public void updateOrCreateCell(Coordinate coordinate, int row, int column, String value, SheetImpl newSheetVersion
                                         ,boolean first) {
         Cell cell = activeCells.get(coordinate);
         int newVersionNumber = newSheetVersion.getVersion();
         newVersionNumber += !first ? 1 : 0;
 
         if (cell != null) {
-//            if (Objects.equals("REF", FunctionValidator.getFunctionName(cell.getOriginalValue()).toUpperCase())){
-//                Coordinate refCellCoordinate = CoordinateFactory.cellIdToRowCol(FunctionValidator.getCellIdForRef(cell.getOriginalValue()));
-//                Cell refCell = getCell(refCellCoordinate.getRow(), refCellCoordinate.getRow());
-//            }
             if(!first) {
                 cell.removeDependencies();
             }
             cell.setCellOriginalValue(value,first);
             cell.setVersion(newVersionNumber);
-
-            return cell.calculateEffectiveValue();
+            cell.calculateEffectiveValue();
         } else {
             cell = new CellImpl(row, column, value, newVersionNumber, this);
             activeCells.put(coordinate, cell);
-            return true;
         }
     }
-
-//    private void updateVersionManager(int cellsThatHaveChanged) {
-//        setNumberOfChangedCellsInVersion(version, cellsThatHaveChanged);
-//        setVersion(version,this);
-//    }
 
     private void removeCoordinate(Coordinate coordinate) {
         Cell cell = activeCells.get(coordinate);
@@ -303,25 +220,6 @@ public class SheetImpl implements Sheet {
 
         return result;
     }
-
-
-
-//    private List<Cell> recalculateAndGetChangedCells(){
-//        List<Cell> cellsThatHaveChanged = new ArrayList<>();
-//
-//        for (Cell cell : orderCellsForCalculation()) {
-//            setCurrentCalculatingCell(cell);
-//
-//            if (cell.calculateEffectiveValue()) {
-//                cellsThatHaveChanged.add(cell);
-//            }
-//        }
-//
-//        return cellsThatHaveChanged;
-//    }
-//
-//    private void setCurrentCalculatingCell(Cell cell) {
-//    }
 
     @Override
     public SheetImpl copySheet() {

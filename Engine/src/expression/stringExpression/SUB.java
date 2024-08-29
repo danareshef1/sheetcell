@@ -1,12 +1,8 @@
 package expression.stringExpression;
 
 import expression.*;
-import expression.Number;
 import expression.functionsValidators.FunctionValidator;
-import expression.numericalExpression.NumericalExpression;
-import expression.numericalExpression.PLUS;
 import parser.ExpressionParser;
-import sheet.Sheet;
 import sheet.SheetReadActions;
 import sheet.cell.CellType;
 import sheet.cell.EffectiveValue;
@@ -31,8 +27,8 @@ public class SUB extends FunctionValidator implements StringExpression, Expressi
         EffectiveValue endValue = expression3.evaluate(sheet);
 
         String sourceString = leftValue.extractValueWithExpectation(String.class);
-        int start = startValue.extractValueWithExpectation(Integer.class);
-        int end = endValue.extractValueWithExpectation(Integer.class);
+        double start = startValue.extractValueWithExpectation(Double.class);
+        double end = endValue.extractValueWithExpectation(Double.class);
 
         if (sourceString == null) {
             throw new IllegalArgumentException("Source string cannot be null");
@@ -42,7 +38,7 @@ public class SUB extends FunctionValidator implements StringExpression, Expressi
         }
 
         try {
-            String result = sourceString.substring(start, end);
+            String result = sourceString.substring((int) start, (int) end);
             return new EffectiveValueImpl(CellType.STRING, result);
         } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("The function SUB expecting for 1 string and 2 numbers in this order.");

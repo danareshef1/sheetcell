@@ -6,15 +6,13 @@ import menu.menuItems.selectionFive.VersionManager;
 import menu.menuItems.selectionFour.CellUpdater;
 import menu.menuItems.selectionOne.LoadFile;
 import menu.menuItems.selectionSeven.LoadSystemState;
-import menu.menuItems.selectionSix.SaveSystenState;
+import menu.menuItems.selectionSix.SaveSystemState;
 import menu.menuItems.selectionThree.CellPresentation;
 import menu.menuItems.selectionTwo.SheetPresentation;
 
 import java.io.IOException;
 
 public class BuildMenu {
-
-    public static SheetDTO sheetDTO;
 
     public static MainMenu buildMenu() throws IOException, JAXBException {
         MainMenu mainMenu = new MainMenu("Sheet-Cell");
@@ -40,7 +38,7 @@ public class BuildMenu {
         CellPresentation presentCell = new CellPresentation(threeSelection);
         CellUpdater sheetUpdater = new CellUpdater(fourSelection);
         VersionManager versionManager = new VersionManager(fiveSelection);
-        SaveSystenState saveSystenState = new SaveSystenState(sixSelection);
+        SaveSystemState saveSystemState = new SaveSystemState(sixSelection);
         LoadSystemState loadSystemState = new LoadSystemState(sevenSelection);
 
         return mainMenu;

@@ -8,6 +8,8 @@ import sheet.cell.CellType;
 import sheet.cell.EffectiveValue;
 import sheet.cell.EffectiveValueImpl;
 
+import java.util.Objects;
+
 public class CONCAT extends FunctionValidator implements StringExpression, ExpressionParser<Expression> {
     private final Expression expression1;
     private final Expression expression2;
@@ -24,7 +26,12 @@ public class CONCAT extends FunctionValidator implements StringExpression, Expre
         EffectiveValue rightValue = expression2.evaluate(sheet);
 
         try {
-            String result = leftValue.extractValueWithExpectation(String.class) + rightValue.extractValueWithExpectation(String.class);
+            String left = leftValue.extractValueWithExpectation(String.class);
+            String right = rightValue.extractValueWithExpectation(String.class);
+            if(left.equals("!UNDEFINED!")  || right.equals("!UNDEFINED!")) {
+                return new EffectiveValueImpl(CellType.STRING, "!UNDEFINED!");
+            }
+            String result = left + right;
             return new EffectiveValueImpl(CellType.STRING, result);
         }catch (IllegalArgumentException e){
             throw new IllegalArgumentException("The function CONCAT expecting for 2 strings.");

@@ -3,17 +3,12 @@ package sheet.cell;
 import java.util.Objects;
 
 public class EffectiveValueImpl implements EffectiveValue {
-    private CellType cellType;
-    private Object value;
+    private final CellType cellType;
+    private final Object value;
 
     public EffectiveValueImpl(CellType cellType, Object value) {
         this.cellType = cellType;
         this.value = value;
-    }
-
-    @Override
-    public CellType getCellType() {
-        return cellType;
     }
 
     @Override
