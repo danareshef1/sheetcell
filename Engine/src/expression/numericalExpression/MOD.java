@@ -25,6 +25,16 @@ public class MOD extends FunctionValidator implements NumericalExpression, Expre
         EffectiveValue leftValue = expression1.evaluate(sheet);
         EffectiveValue rightValue = expression2.evaluate(sheet);
 
+        // Check if both arguments are numerical expressions
+        if ((expression1.getFunctionResultType().equals(CellType.NUMERIC) && !expression1.getFunctionResultType().equals(CellType.UNKNOWN))
+                || (!expression2.getFunctionResultType().equals(CellType.NUMERIC) && !expression2.getFunctionResultType().equals(CellType.UNKNOWN))) {
+            return new EffectiveValueImpl(CellType.NUMERIC, "NaN");
+        }
+
+        if (checkIfRefType(expression1, sheet, CellType.NUMERIC) || checkIfRefType(expression2, sheet, CellType.NUMERIC)){
+            return new EffectiveValueImpl(CellType.NUMERIC, "!UNDEFINED!");
+        }
+
         try {
             double result = leftValue.extractValueWithExpectation(Double.class) % rightValue.extractValueWithExpectation(Double.class);
             return new EffectiveValueImpl(CellType.NUMERIC, result);

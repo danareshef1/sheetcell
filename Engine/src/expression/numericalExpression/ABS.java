@@ -21,6 +21,15 @@ public class ABS extends FunctionValidator implements NumericalExpression, Expre
     public EffectiveValue evaluate(SheetReadActions sheet) {
         EffectiveValue expression1 = expression.evaluate(sheet);
 
+         // Check if both arguments are numerical expressions
+        if (!expression.getFunctionResultType().equals(CellType.NUMERIC) && !expression.getFunctionResultType().equals(CellType.UNKNOWN)) {
+            return new EffectiveValueImpl(CellType.NUMERIC, "NaN");
+        }
+
+        if (checkIfRefType(expression, sheet, CellType.NUMERIC)){
+            return new EffectiveValueImpl(CellType.NUMERIC, "!UNDEFINED!");
+        }
+
         try {
             double result = Math.abs(expression1.extractValueWithExpectation(Double.class));
             return new EffectiveValueImpl(CellType.NUMERIC, result);
@@ -40,10 +49,10 @@ public class ABS extends FunctionValidator implements NumericalExpression, Expre
             throw new IllegalArgumentException("ABS function requires exactly 2 arguments, but got " + args.length);
         }
 
-        // Check if both arguments are numerical expressions
-        if (!args[0].getFunctionResultType().equals(CellType.NUMERIC) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN)) {
-            throw new IllegalArgumentException("Invalid argument types for ABS function. Expected NUMERIC, but got " + args[0].getFunctionResultType());
-        }
+//        // Check if both arguments are numerical expressions
+//        if (!args[0].getFunctionResultType().equals(CellType.NUMERIC) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN)) {
+//            throw new IllegalArgumentException("Invalid argument types for ABS function. Expected NUMERIC, but got " + args[0].getFunctionResultType());
+//        }
 
         return new ABS(args[0]);
     }

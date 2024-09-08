@@ -28,10 +28,10 @@ public class REF extends FunctionValidator implements SystemicExpression, Expres
                     "of the sheet boundaries");
         }
 
-        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getOriginalValue() == null) {
-            throw new IllegalArgumentException("The cell you chose to ref to is empty. " +
-                    "You cant reference to an empty cell");
-        }
+//        if(sheet.getCell(coordinate.getRow(), coordinate.getColumn()).getOriginalValue() == null) {
+//            throw new IllegalArgumentException("The cell you chose to ref to is empty. " +
+//                    "You cant reference to an empty cell");
+//        }
 
         Cell refCell = sheet.getCell(coordinate.getRow(), coordinate.getColumn());
         sheet.getCurrentCalculatingCell().addDependsOnValue(refCell);
@@ -59,5 +59,9 @@ public class REF extends FunctionValidator implements SystemicExpression, Expres
         }
 
         return new REF(target);
+    }
+
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 }

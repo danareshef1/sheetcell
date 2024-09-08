@@ -5,6 +5,7 @@ import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 import sheet.layout.Layout;
+import sheet.range.RangeManager;
 import sheet.version.Version;
 import sheet.version.VersionImpl;
 import java.io.*;

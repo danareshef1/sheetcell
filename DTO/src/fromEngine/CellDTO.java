@@ -29,7 +29,12 @@ public class CellDTO {
         this.dependsOnValues = getDependsOn();
         this.influencingOnValues = getInfluencingOn();
         if (originalValue != null) {
-            this.effectiveValue = cell.getEffectiveValue().getValue().toString();
+            if (cell.getEffectiveValue().getValue() == null){
+                this.effectiveValue = null;
+            }
+            else {
+                this.effectiveValue = cell.getEffectiveValue().getValue().toString();
+            }
         } else {
             this.effectiveValue = null;
         }

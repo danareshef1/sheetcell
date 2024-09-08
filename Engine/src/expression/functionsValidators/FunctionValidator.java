@@ -60,9 +60,27 @@ public class FunctionValidator {
         return parts[0].trim().toUpperCase();
     }
 
-    public static String getCellIdForRef(String expression) {
+//    public static String getCellIdForRef(String expression) {
+//        expression = expression.substring(1, expression.length() - 1).trim();
+//        String[] parts = expression.split(",", 2);
+//        return parts[1].trim().toUpperCase();
+//    }
+
+    public static String getCellIdForRangeName(String expression) {
         expression = expression.substring(1, expression.length() - 1).trim();
         String[] parts = expression.split(",", 2);
         return parts[1].trim().toUpperCase();
+    }
+
+    public static String getCellIdForRangeLeft(String expression) {
+        expression = expression.substring(1, expression.length() - 1).trim();
+        String[] parts = expression.split(",", 2);
+        return parts[2].trim().toUpperCase();
+    }
+
+    public static String getCellIdForRangeRight(String expression) {
+        expression = expression.substring(1, expression.length() - 1).trim();
+        String[] parts = expression.split(",", 2);
+        return parts[3].trim().toUpperCase();
     }
 }

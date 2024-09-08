@@ -13,5 +13,7 @@ public class Main {
         System.out.println();
         MainMenu menu = BuildMenu.buildMenu();
         menu.show();
+
+       /// /Users/danareshef/IdeaProjects/testsFromMamaEX1/basic.xml
     }
 }

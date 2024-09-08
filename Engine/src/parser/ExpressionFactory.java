@@ -1,8 +1,8 @@
-
 package parser;
 
 import expression.*;
 import expression.Number;
+import expression.boolianExpression.*;
 import expression.functionsValidators.FunctionValidator;
 import expression.numericalExpression.*;
 import expression.stringExpression.CONCAT;
@@ -27,6 +27,16 @@ public class ExpressionFactory {
         parsers.put("CONCAT", new CONCAT(null, null));
         parsers.put("SUB", new SUB(null, null, null));
         parsers.put("REF", new REF(null));
+        parsers.put("NOT", new NOT(null));
+        parsers.put("AND", new AND(null, null));
+        parsers.put("EQUAL", new EQUAL(null, null));
+        parsers.put("BIGGER", new BIGGER(null, null));
+        parsers.put("LESS", new LESS(null, null));
+        parsers.put("OR", new OR(null, null));
+        parsers.put("IF", new IF(null, null, null));
+        parsers.put("PERCENT", new PERCENT(null, null));
+        parsers.put("AVERAGE", new AVERAGE(null));
+        parsers.put("SUM", new SUM(null));
     }
 
     public static Expression createExpression(SheetReadActions sheet, String expression) {
