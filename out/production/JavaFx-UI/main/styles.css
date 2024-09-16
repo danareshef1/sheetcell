@@ -1,0 +1,85 @@
+/* styles.css */
+
+/* General GridPane styling */
+.grid-pane {
+    -fx-background-color: #f0f0f0; /* Light grey background for the grid */
+    -fx-padding: 10;
+    -fx-border-color: #d0d0d0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+}
+
+/* Column and row headers */
+.header {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px; /* Increase font size for better visibility */
+    -fx-background-color: #D32F2F; /* Red background for headers */
+    -fx-text-fill: white; /* White text color for contrast */
+    -fx-alignment: center; /* Center the text horizontally and vertically */
+    -fx-padding: 5;
+    -fx-border-color: #B71C1C; /* Darker red for border */
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+}
+
+.header:hover {
+    -fx-background-color: #B71C1C; /* Darker red on hover */
+}
+
+/* Editable cell */
+.editable-cell {
+    -fx-background-color: #ffffff; /* White background */
+    -fx-border-color: #d0d0d0; /* Light grey border */
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-alignment: center; /* Center the text horizontally and vertically */
+    -fx-padding: 5;
+}
+
+.editable-cell:hover {
+    -fx-background-color: #FFEBEE; /* Light red background on hover */
+}
+
+.editable-cell:selected {
+    -fx-background-color: #FFCDD2; /* Light red when selected */
+}
+
+/* Read-only cell */
+.read-only-cell {
+    -fx-background-color: #f9f9f9; /* Very light grey background */
+    -fx-border-color: #d0d0d0; /* Light grey border */
+    -fx-border-width: 1px;
+    -fx-border-style: solid;
+    -fx-alignment: center; /* Center the text horizontally and vertically */
+    -fx-padding: 5;
+}
+
+.read-only-cell:hover {
+    -fx-background-color: #F5F5F5; /* Slightly darker grey on hover */
+}
+
+/* Optional: Add a subtle shadow to the grid to make it stand out */
+.grid-pane {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0.1, 0, 2);
+}
+
+/* Optional: Smooth transition for background changes */
+.editable-cell, .read-only-cell, .header {
+    -fx-transition: background-color 0.3s ease;
+}
+
+/* Adjust label font size for better readability */
+.grid-pane .label {
+    -fx-font-size: 13px;
+}
+
+/* Optional: Change cursor to hand when hovering over cells */
+.editable-cell:hover, .read-only-cell:hover {
+    -fx-cursor: hand;
+}
+
+/* Selected cell styling */
+.cell-selected {
+    -fx-background-color: #FFCDD2 !important; /* Light red when selected */
+}

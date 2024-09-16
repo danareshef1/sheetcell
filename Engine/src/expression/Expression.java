@@ -6,7 +6,6 @@ import sheet.cell.EffectiveValue;
 
 import java.io.Serializable;
 import sheet.cell.CellType;
-import sheet.cell.EffectiveValueImpl;
 
 import static parser.ExpressionFactory.createExpression;
 

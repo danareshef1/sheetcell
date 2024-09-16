@@ -1,0 +1,34 @@
+/* General GridPane styling */
+.grid-pane {
+    -fx-background-color: #f4f4f4;
+}
+
+/* Column and row headers */
+.header {
+    -fx-font-weight: bold;
+    -fx-background-color: #d0d0d0;
+    -fx-alignment: center;
+    -fx-padding: 5;
+    -fx-border-color: #a0a0a0;
+    -fx-border-width: 1px;
+}
+
+/* Editable cell */
+.editable-cell {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+}
+
+/* Read-only cell */
+.read-only-cell {
+    -fx-background-color: #e0e0e0;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+}
+
+/* Column and row resize handles */
+.resize-handle {
+    -fx-background-color: #cccccc;
+    -fx-cursor: crosshair;
+}

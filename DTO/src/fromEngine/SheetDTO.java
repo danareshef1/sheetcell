@@ -39,10 +39,14 @@ public class SheetDTO {
     public Layout getSheetSize() {
         return size;
     }
+
+    // Returns a specific cell by its row and column
     public CellDTO getCell(int row, int col) {
-        return activeCells.get(CoordinateFactory.createCoordinate(row, col));
+        Coordinate coordinate = CoordinateFactory.createCoordinate(row, col);
+        return activeCells.get(coordinate);
     }
 
+    // Converts active cells in the sheet to CellDTOs
     private Map<Coordinate, CellDTO> convertCellsToDTO(Sheet sheet) {
         Map<Coordinate, CellDTO> cells = new HashMap<>();
         // Iterate over the active cells in the sheet and map them to CellDTOs
