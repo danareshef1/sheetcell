@@ -1,3 +1,4 @@
+
 package expression.numericalExpression;
 
 import expression.Expression;
@@ -24,6 +25,16 @@ public class MINUS extends FunctionValidator implements NumericalExpression, Exp
         EffectiveValue leftValue = expression1.evaluate(sheet);
         EffectiveValue rightValue = expression2.evaluate(sheet);
 
+        // Check if both arguments are numerical expressions
+        if ((expression1.getFunctionResultType().equals(CellType.NUMERIC) && !expression1.getFunctionResultType().equals(CellType.UNKNOWN))
+                || (!expression2.getFunctionResultType().equals(CellType.NUMERIC) && !expression2.getFunctionResultType().equals(CellType.UNKNOWN))) {
+            return new EffectiveValueImpl(CellType.NUMERIC, "NaN");
+        }
+
+        if (checkIfRefType(expression1, sheet, CellType.NUMERIC) || checkIfRefType(expression2, sheet, CellType.NUMERIC)){
+            return new EffectiveValueImpl(CellType.NUMERIC, "!UNDEFINED!");
+        }
+
         try {
             double result = leftValue.extractValueWithExpectation(Double.class) - rightValue.extractValueWithExpectation(Double.class);
             return new EffectiveValueImpl(CellType.NUMERIC, result);
@@ -42,13 +53,13 @@ public class MINUS extends FunctionValidator implements NumericalExpression, Exp
         if (args.length != 2) {
             throw new IllegalArgumentException("MINUS function requires exactly 2 arguments, but got " + args.length);
         }
-
-        // Check if both arguments are numerical expressions
-        if ((!args[0].getFunctionResultType().equals(CellType.NUMERIC) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN))
-                || (!args[1].getFunctionResultType().equals(CellType.NUMERIC) && !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
-            throw new IllegalArgumentException("Invalid argument types for MINUS function. Expected NUMERIC, but got " + args[0].getFunctionResultType()
-                    + " and " + args[1].getFunctionResultType());
-        }
+//
+//        // Check if both arguments are numerical expressions
+//        if ((!args[0].getFunctionResultType().equals(CellType.NUMERIC) && !args[0].getFunctionResultType().equals(CellType.UNKNOWN))
+//                || (!args[1].getFunctionResultType().equals(CellType.NUMERIC) && !args[1].getFunctionResultType().equals(CellType.UNKNOWN))) {
+//            throw new IllegalArgumentException("Invalid argument types for MINUS function. Expected NUMERIC, but got " + args[0].getFunctionResultType()
+//                    + " and " + args[1].getFunctionResultType());
+//        }
 
         return new MINUS(args[0], args[1]);
     }

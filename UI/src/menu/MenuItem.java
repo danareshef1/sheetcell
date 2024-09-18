@@ -1,14 +1,11 @@
 package menu;
 
-import engine.Engine;
-import engine.EngineImpl;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class MenuItem {
-    protected static final char FINISH_OPTION = '6';
+    protected static final char FINISH_OPTION = '8';
     private final String title;
     private final MenuItem prevMenuItem;
     private final List<MenuItem> subMenuItems = new ArrayList<>();
@@ -25,10 +22,6 @@ public class MenuItem {
 
     public MenuItem getPrevMenuItem() {
         return prevMenuItem;
-    }
-
-    public char getFinishOption() {
-        return FINISH_OPTION;
     }
 
     public MenuItem getSubMenuByIndex(int subMenuIndex) {

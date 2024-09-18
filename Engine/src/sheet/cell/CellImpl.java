@@ -1,50 +1,34 @@
 package sheet.cell;
 
 import expression.Expression;
-import expression.functionsValidators.FunctionValidator;
-import expression.systemicExpression.REF;
 import parser.ExpressionFactory;
 import sheet.SheetReadActions;
 import sheet.coordinate.Coordinate;
-import sheet.coordinate.CoordinateFactory;
 import sheet.coordinate.CoordinateImpl;
-
-import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class CellImpl implements Cell {
     private final Coordinate coordinate;
     private EffectiveValue effectiveValue = null;
     private String originalValue;
     private int version;
-    private List<Cell> dependsOnValues;
-    private List<Cell> influencingOnValues;
+    private Set<Cell> dependsOnValues;
+    private Set<Cell> influencingOnValues;
     private String cellId;
     private final SheetReadActions sheet;
 
-    // Constructor
     public CellImpl(int row, int column, String originalValue, int version, SheetReadActions sheet) {
         this.sheet = sheet;
         this.coordinate = new CoordinateImpl(row, column);
         this.originalValue = originalValue;
         this.version = version;
-        this.dependsOnValues = new ArrayList<>();
-        this.influencingOnValues = new ArrayList<>();
+        this.dependsOnValues = new HashSet<>();
+        this.influencingOnValues = new HashSet<>();
         this.cellId = (columnToString(column)) + "" + (row+1);
         if (originalValue != null) {
             calculateEffectiveValue();
         }
-    }
-
-    public CellImpl(int row, int column, int version, SheetReadActions sheet) {
-        this.sheet = sheet;
-        this.coordinate = new CoordinateImpl(row, column);
-        this.version = version;
-        this.dependsOnValues = new ArrayList<>();
-        this.influencingOnValues = new ArrayList<>();
-        this.cellId = (columnToString(column)) + "" + (row + 1);
-
     }
 
     public static char columnToString(int col) {
@@ -56,23 +40,12 @@ public class CellImpl implements Cell {
         return cellId;
     }
 
-//    @Override
-//    public void removeDependencies() {
-//        for (Cell cell : dependsOnValues) {
-//            cell.getInfluencingOnValues().remove(this);
-//        }
-//        for (Cell cell : influencingOnValues) {
-//            cell.getDependsOnValues().remove(this);
-//        }
-//    }
-
     @Override
     public void removeDependencies() {
         // Remove this cell from the influencing list of all its dependencies
         for (Cell dependedCell : dependsOnValues) {
-            dependedCell.getInfluencingOnValues().remove(dependedCell);
+            dependedCell.getInfluencingOnValues().remove(this);
         }
-        //remove edge?
 
         // Clear the dependencies list
         dependsOnValues.clear();
@@ -87,27 +60,6 @@ public class CellImpl implements Cell {
     public String getOriginalValue() {
         return originalValue;
     }
-
-//    @Override
-//    public void setCellOriginalValue(String value) {
-//        // Remove the current cell from influencing lists of all cells it depends on
-//        for (Cell cell : dependsOnValues) {
-//            cell.getInfluencingOnValues().remove(this);
-//        }
-//
-//        // Clear the dependsOnValues list
-//        dependsOnValues.clear();
-//
-//        // Update the original value
-//        this.originalValue = value;
-//
-//        // Recalculate the effective value
-//        if (originalValue != null) {
-//            calculateEffectiveValue();
-//        } else {
-//            effectiveValue = null;
-//        }
-//    }
 
     @Override
     public void setCellOriginalValue(String value,boolean first) {
@@ -126,9 +78,11 @@ public class CellImpl implements Cell {
         }
     }
 
-
     @Override
     public EffectiveValue getEffectiveValue() {
+        if (effectiveValue == null) {
+            calculateEffectiveValue();
+        }
         return this.effectiveValue;
     }
 
@@ -143,24 +97,23 @@ public class CellImpl implements Cell {
     }
 
     @Override
-    public List<Cell> getDependsOnValues() {
+    public Set<Cell> getDependsOnValues() {
         return dependsOnValues;
     }
 
     @Override
     public void addDependsOnValue(Cell cell) {
-            dependsOnValues.add(cell);
-
+        dependsOnValues.add(cell);
     }
 
     @Override
-    public List<Cell> getInfluencingOnValues() {
+    public Set<Cell> getInfluencingOnValues() {
         return influencingOnValues;
     }
 
     @Override
     public void addInfluencingOnValues(Cell cell) {
-            influencingOnValues.add(cell);
+        influencingOnValues.add(cell);
     }
 
     public EffectiveValue getContent() {
@@ -177,8 +130,10 @@ public class CellImpl implements Cell {
 
     @Override
     public boolean calculateEffectiveValue() {
-        Expression expression = ExpressionFactory.createExpression(sheet, originalValue, cellId);
+        sheet.setCurrentCalculatingCell(this);
+        Expression expression = ExpressionFactory.createExpression(sheet, originalValue);
         EffectiveValue newEffectiveValue = expression.evaluate(sheet);
+        sheet.setCurrentCalculatingCell(null);
 
         if (newEffectiveValue.equals(effectiveValue)) {
             return false;
@@ -188,4 +143,3 @@ public class CellImpl implements Cell {
         }
     }
 }
-

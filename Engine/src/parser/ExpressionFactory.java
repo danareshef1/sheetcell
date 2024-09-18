@@ -2,16 +2,13 @@ package parser;
 
 import expression.*;
 import expression.Number;
+import expression.boolianExpression.*;
 import expression.functionsValidators.FunctionValidator;
 import expression.numericalExpression.*;
 import expression.stringExpression.CONCAT;
 import expression.stringExpression.SUB;
 import expression.systemicExpression.REF;
-import sheet.Sheet;
 import sheet.SheetReadActions;
-import sheet.coordinate.Coordinate;
-import sheet.coordinate.CoordinateFactory;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,10 +27,19 @@ public class ExpressionFactory {
         parsers.put("CONCAT", new CONCAT(null, null));
         parsers.put("SUB", new SUB(null, null, null));
         parsers.put("REF", new REF(null));
+        parsers.put("NOT", new NOT(null));
+        parsers.put("AND", new AND(null, null));
+        parsers.put("EQUAL", new EQUAL(null, null));
+        parsers.put("BIGGER", new BIGGER(null, null));
+        parsers.put("LESS", new LESS(null, null));
+        parsers.put("OR", new OR(null, null));
+        parsers.put("IF", new IF(null, null, null));
+        parsers.put("PERCENT", new PERCENT(null, null));
+        parsers.put("AVERAGE", new AVERAGE(null));
+        parsers.put("SUM", new SUM(null));
     }
 
-    public static Expression createExpression(SheetReadActions sheet, String expression, String cellId) {
-        expression = expression.trim();
+    public static Expression createExpression(SheetReadActions sheet, String expression) {
         Expression result;
 
         if (StringValidator.isNumber(expression))
@@ -41,41 +47,29 @@ public class ExpressionFactory {
         else if (StringValidator.isBool(expression))
             result = new Bool(Boolean.parseBoolean(expression));
         else if (StringValidator.isFunction(expression)) {
-            result = parseFunction(expression, sheet, cellId);
-
+            result = parseFunction(expression, sheet);
         } else {
             result = new Text(expression);
         }
 
-        if (result instanceof REF) {
-            String refCellId = FunctionValidator.getCellIdForRef(expression);
-            Coordinate ref = CoordinateFactory.cellIdToRowCol(refCellId.toUpperCase());
-            Coordinate cellIdCoordinate = CoordinateFactory.cellIdToRowCol(cellId.toUpperCase());
-            sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()).addDependsOnValue(sheet.getCell(ref.getRow(), ref.getColumn()));
-            sheet.getCell(ref.getRow(), ref.getColumn()).addInfluencingOnValues(sheet.getCell(cellIdCoordinate.getRow(), cellIdCoordinate.getColumn()));
-        }
         return result;
     }
 
-    public static Expression parseFunction(String expression, SheetReadActions sheet, String cellId) {
+    public static Expression parseFunction(String expression, SheetReadActions sheet) {
         String functionName = FunctionValidator.getFunctionName(expression);
         ExpressionParser<?> parser = parsers.get(functionName);
 
         if (parser != null) {
-            // Use the relevant validator for this function type
             FunctionValidator validator = new FunctionValidator();
             validator.functionName = functionName;
 
-            // Validate the function parts
             String[] args = validator.functionParts(expression);
 
-            // Parse each argument recursively
             Expression[] parsedArgs = new Expression[args.length - 1];
             for (int i = 1; i < args.length; i++) {
-                parsedArgs[i - 1] = createExpression(sheet, args[i], cellId);
+                parsedArgs[i - 1] = createExpression(sheet, args[i]);
             }
 
-            // Pass the parsed arguments to the specific parser
             return parser.parse(parsedArgs);
         } else {
             throw new IllegalArgumentException("Unknown function: " + functionName);

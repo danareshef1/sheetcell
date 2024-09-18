@@ -1,3 +1,4 @@
+
 package expression.numericalExpression;
 
 import expression.Expression;
@@ -24,6 +25,16 @@ public class POW extends FunctionValidator implements NumericalExpression, Expre
         EffectiveValue leftValue = expression1.evaluate(sheet);
         EffectiveValue rightValue = expression2.evaluate(sheet);
 
+        // Check if both arguments are numerical expressions
+        if ((expression1.getFunctionResultType().equals(CellType.NUMERIC) && !expression1.getFunctionResultType().equals(CellType.UNKNOWN))
+                || (!expression2.getFunctionResultType().equals(CellType.NUMERIC) && !expression2.getFunctionResultType().equals(CellType.UNKNOWN))) {
+            return new EffectiveValueImpl(CellType.NUMERIC, "NaN");
+        }
+
+        if (checkIfRefType(expression1, sheet, CellType.NUMERIC) || checkIfRefType(expression2, sheet, CellType.NUMERIC)){
+            return new EffectiveValueImpl(CellType.NUMERIC, "!UNDEFINED!");
+        }
+
         try {
             double result = Math.pow(leftValue.extractValueWithExpectation(Double.class), rightValue.extractValueWithExpectation(Double.class));
             return new EffectiveValueImpl(CellType.NUMERIC, result);
@@ -40,7 +51,7 @@ public class POW extends FunctionValidator implements NumericalExpression, Expre
     @Override
     public Expression parse(Expression... args) {
         if (args.length != 2) {
-            throw new IllegalArgumentException("pow function requires exactly 2 arguments, but got " + args.length);
+            throw new IllegalArgumentException("POW function requires exactly 2 arguments, but got " + args.length);
         }
 
         // Check if both arguments are numerical expressions

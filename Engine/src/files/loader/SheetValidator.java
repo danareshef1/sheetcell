@@ -2,10 +2,8 @@ package files.loader;
 
 import files.jaxb.schema.generated.STLCell;
 import files.jaxb.schema.generated.STLSheet;
-import parser.StringValidator;
 import sheet.cellSize.CellSizeImpl;
 import sheet.layout.LayoutImpl;
-
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -74,7 +72,7 @@ public class SheetValidator {
 
             // Check if cell is within valid range
             if (!isInBounds(column-'A', 0, numCols-1)
-            || !isInBounds(row, 0, numRows+1)){
+                    || !isInBounds(row, 0, numRows+1)){
                 throw new IllegalArgumentException("cell" + cell.getRow() + ":" + cell.getColumn() + " is not in valid range." +
                         "The range is " + numRows + " rows and " + numCols + " columns.");
             }

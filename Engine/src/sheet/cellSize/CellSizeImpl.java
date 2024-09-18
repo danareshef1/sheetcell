@@ -8,9 +8,11 @@ public class CellSizeImpl implements CellSize {
         this.colWidth = colWidth;
         this.rowHeight = rowHeight;
     }
+    @Override
     public int getColWidth() {
         return colWidth;
     }
+    @Override
     public int getRowHeight() {
         return rowHeight;
     }

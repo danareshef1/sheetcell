@@ -1,24 +1,21 @@
 package sheet.cell;
 
-import expression.Expression;
 import sheet.coordinate.Coordinate;
-
 import java.io.Serializable;
-import java.util.List;
+import java.util.Set;
 
 public interface Cell extends Serializable {
     Coordinate getCoordinate();
     String getOriginalValue();
     void setCellOriginalValue(String value, boolean first);
-//    void setCellEffectiveValue(Expression<?> value);
     EffectiveValue getEffectiveValue();
-    void addInfluencingOnValues(Cell cell);
+    void addInfluencingOnValues(sheet.cell.Cell cell);
     void setVersion(int version);
     boolean calculateEffectiveValue();
     int getVersion();
-    List<Cell> getDependsOnValues();
-    void addDependsOnValue(Cell cell);
-    List<Cell> getInfluencingOnValues();
+    Set<sheet.cell.Cell> getDependsOnValues();
+    void addDependsOnValue(sheet.cell.Cell cell);
+    Set<sheet.cell.Cell> getInfluencingOnValues();
     void updateVersion();
     String getCellId();
     void removeDependencies();

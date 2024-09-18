@@ -1,43 +1,4 @@
-//package expression;
-//
-//import expression.numericalExpression.PLUS;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//public class FunctionValidator {
-//
-//    protected String functionName;
-//
-//    public String[] functionParts(String expression){
-//        expression = expression.trim();
-//
-//        functionName = getFunctionName(expression);
-//        if (expression.startsWith("{") && expression.endsWith("}")) {
-//            expression = expression.substring(1, expression.length() - 1).trim();
-//        } else {
-//            throw new IllegalArgumentException("Invalid expression format: " + expression);
-//        }
-//
-//        String[] parts = expression.split(",");
-//
-//        if (!parts[0].trim().equals(functionName)) {
-//            throw new IllegalArgumentException("Invalid" + functionName + "expression format: " + expression);
-//        }
-//
-//        return parts;
-//    }
-//
-//    public static String getFunctionName(String expression) {
-//        expression = expression.substring(1, expression.length() - 1).trim();
-//        String[] parts = expression.split(",", 2);
-//        return parts[0].trim();
-//    }
-//}
-
 package expression.functionsValidators;
-
-import sheet.SheetReadActions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -99,10 +60,27 @@ public class FunctionValidator {
         return parts[0].trim().toUpperCase();
     }
 
-    public static String getCellIdForRef(String expression) {
+//    public static String getCellIdForRef(String expression) {
+//        expression = expression.substring(1, expression.length() - 1).trim();
+//        String[] parts = expression.split(",", 2);
+//        return parts[1].trim().toUpperCase();
+//    }
+
+    public static String getCellIdForRangeName(String expression) {
         expression = expression.substring(1, expression.length() - 1).trim();
         String[] parts = expression.split(",", 2);
         return parts[1].trim().toUpperCase();
     }
-}
 
+    public static String getCellIdForRangeLeft(String expression) {
+        expression = expression.substring(1, expression.length() - 1).trim();
+        String[] parts = expression.split(",", 2);
+        return parts[2].trim().toUpperCase();
+    }
+
+    public static String getCellIdForRangeRight(String expression) {
+        expression = expression.substring(1, expression.length() - 1).trim();
+        String[] parts = expression.split(",", 2);
+        return parts[3].trim().toUpperCase();
+    }
+}

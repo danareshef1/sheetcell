@@ -1,6 +1,5 @@
-package sheet.coordinate;
 
-import java.io.Serializable;
+package sheet.coordinate;
 
 public class CoordinateImpl implements Coordinate {
     private final int row;
@@ -26,7 +25,7 @@ public class CoordinateImpl implements Coordinate {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        CoordinateImpl that = (CoordinateImpl) o;
+        sheet.coordinate.CoordinateImpl that = (sheet.coordinate.CoordinateImpl) o;
 
         if (row != that.row) return false;
         return column == that.column;
@@ -39,15 +38,7 @@ public class CoordinateImpl implements Coordinate {
         return result;
     }
 
-    @Override
-    public String createCellCoordinateString(){
-        String rowString =  String.valueOf(row +1);
-        String colString =  String.valueOf((char) ('A' + ((column -1 ) % 26)));
-        return colString + rowString;
-    }
-
-    @Override
     public String toString() {
-        return String.format("(row:%d, column:%d)", row, column);
+        return "" + (char) ('A' + column) + (row + 1);
     }
 }

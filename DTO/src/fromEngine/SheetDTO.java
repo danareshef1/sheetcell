@@ -1,10 +1,8 @@
 package fromEngine;
 
-import fromUI.CellUpdateDTO;
-import sheet.layout.LayoutImpl;
+import sheet.layout.Layout;
 import sheet.Sheet;
 import sheet.cell.Cell;
-import sheet.cell.CellImpl;
 import sheet.coordinate.Coordinate;
 import sheet.coordinate.CoordinateFactory;
 
@@ -15,7 +13,7 @@ public class SheetDTO {
     private int version;
     private String name;
     private Map<Coordinate, CellDTO> activeCells;
-    private LayoutImpl size;
+    private Layout size;
     private int counterChangedCells;
 
     public SheetDTO(Sheet sheet) {
@@ -38,13 +36,17 @@ public class SheetDTO {
     public Map<Coordinate, CellDTO> getActiveCells() {
         return activeCells;
     }
-    public LayoutImpl getSheetSize() {
+    public Layout getSheetSize() {
         return size;
     }
+
+    // Returns a specific cell by its row and column
     public CellDTO getCell(int row, int col) {
-        return activeCells.get(CoordinateFactory.createCoordinate(row, col));
+        Coordinate coordinate = CoordinateFactory.createCoordinate(row, col);
+        return activeCells.get(coordinate);
     }
 
+    // Converts active cells in the sheet to CellDTOs
     private Map<Coordinate, CellDTO> convertCellsToDTO(Sheet sheet) {
         Map<Coordinate, CellDTO> cells = new HashMap<>();
         // Iterate over the active cells in the sheet and map them to CellDTOs
